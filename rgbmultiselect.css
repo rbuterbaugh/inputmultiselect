@@ -12,6 +12,7 @@
 .jquery_rgbmultiselect_input
 { 
   color: black;
+  background-color: white;
   background-image: url(rgbmultiselect.gif);
   background-repeat: no-repeat;
   background-attachment: scroll;
