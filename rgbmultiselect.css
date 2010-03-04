@@ -31,7 +31,7 @@
   top: 0;
   left: 0;
   height: auto;
-  border: 1px solid black;
+  border: 2px solid #73b4e3;
   font-size: 13px;
   line-height: 15px;
   font-family: Helvetica, Tahoma, Arial, sans-serif;
@@ -82,27 +82,32 @@ If you want the text after the checkboxes to wrap bulleted-list style, use somet
 .jquery_rgbmultiselect_options_item
 { 
   border: 1px solid white;
+  line-height: 20px;
  }
 
 .jquery_rgbmultiselect_options_selected_item
 { 
-  background-color: #ccffcc;
-  border: 1px solid #ccffcc;
+  background-color: #223388;
+  border: 1px solid #223388;
+  color: white;
   }
 
 .jquery_rgbmultiselect_options_item_arrownav_selected
 { 
-  border: 1px solid #ff8888;
+  border: 1px solid #777777;
  }
 
 .jquery_rgbmultiselect_options_item_hovered
 { 
-  background-color: #cccccc;
+  color: white;
+  border: 1px solid #FF6D00;
+  background-color: #FF6D00;
   }
 
 .jquery_rgbmultiselect_options_item_singlefiltered
 { 
-  background-color: #8888ff;
+  color: white;
+  background-color: #FF6D00;
   }
 
 .jquery_rgbmultiselect_options_unselected
