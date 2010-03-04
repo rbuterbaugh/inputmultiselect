@@ -582,7 +582,7 @@
 			 e.stopPropagation();
 		       }).mousedown(function(e) {e.stopPropagation();});
 
-       attachHoverEvents(clearText);
+       attachHoverEvents(clearTextContainer);
 
        return clearText;
      }
