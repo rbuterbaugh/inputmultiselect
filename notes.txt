@@ -1,0 +1,6 @@
+TODO: update height of unselected section when options container is shown or options are added/removed
+
+add rel="subheader" type
+ - option to show subheaders when filtering
+
+callbacks
