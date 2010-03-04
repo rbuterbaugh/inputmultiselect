@@ -55,7 +55,7 @@
 
 .jquery_rgbmultiselect_options_item INPUT
 { 
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .jquery_rgbmultiselect_options_item SPAN .jquery_rgbmultiselect_options_text_filtermatch
