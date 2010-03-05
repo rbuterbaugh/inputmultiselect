@@ -113,3 +113,18 @@ A:hover
   line-height: 14px;
   margin: 0;
 }
+
+.configtable
+{ 
+  padding: 0;
+  margin: 10px;
+  border-collapse: collapse;
+  border: 1px solid #aaaaaa;
+}
+
+.configtable TH, .configtable TD
+{ 
+  padding: 5px;
+  border: 1px solid #aaaaaa;
+  vertical-align: center;
+}
