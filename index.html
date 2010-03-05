@@ -25,7 +25,7 @@
     <li><a href="#intro">Introduction</a></li>
     <li><a href="#demo">Demo</a></li>
     <li><a href="#example">A Simple Example</a></li>
-    <li><a href="#config">Configuration</a></li>
+    <li><a href="#config">Setup and Configuration</a></li>
     <li><a href="#download">Download</a></li>
     <li><a href="#reqs">Requirements</a></li>
     <li><a href="#support">Support</a></li>
@@ -41,7 +41,7 @@
     <li>can set a maximum limit on the number of options selected</li>
     <li>all selections stored using the backing select box for maximum compatibility and degradability</li>
     <li>cross-browser: IE 6+, Firefox 2+, Safari 3+, Opera 9+, Chrome 1+</li>
-    <li>small size (24K minified)</li>
+    <li>small size (24K minified, 14K packed)</li>
   </ul>
 
   <a name="demo"></a>
@@ -159,10 +159,27 @@
   <strong>Note:</strong> we are giving you the ability to see the select box purely for demonstration purposes. rgbmultiselect only parses the select box once (for maximum DOM efficiency with long lists), then maintains the state of the select box in memory, so if you alter the select box directly, rgbmultiselect won't see the change.
 
   <a name="config"></a>
-  <h2>Configuration</h2>
+  <h2>Setup and Configuration</h2>
+
+  <div>
+    Configuration options are specified as follows (first example has no configuration options, second example has one option):
+  </div>
+
+  <div class="code">
+  <pre>  $("#picknumbers").rgbmultiselect();
+
+  $("#pick3numbers").rgbmultiselect({
+				      maxSelections: 3
+				    });</pre>
+  </div>
 
   <a name="download"></a>
   <h2>Download</h2>
+  <a href="rgbmultiselect-1.0.zip">The whole package</a> - includes script, minified version, style sheet, icon, example HTML file, and jQuery 1.3.2
+  <br/><br/>
+  Just the script: <a href="rgbmultiselect-1.0.min.js">minified</a> (24K) | <a href="rgbmultiselect-1.0.packed.js">packed</a> (13K) | <a href="rgbmultiselect-1.0.js">development</a> (33K)
+  <br/><br/>
+  Others: <a href="rgbmultiselect.gif">icon</a> | <a href="rgbmultiselect.css">stylesheet</a>
     
   <a name="reqs"></a>
   <h2>Requirements</h2>

@@ -94,3 +94,22 @@ A:hover
 { 
   color: blue;
  }
+
+.code
+{ 
+  border: 1px dashed #aaaaaa;
+  font-family: monospace;
+  background-color: #dddddd;
+  padding: 10px;
+  margin: 10px;
+  font-size: 12px;
+  line-height: 14px;
+}
+
+.code pre
+{ 
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 14px;
+  margin: 0;
+}
