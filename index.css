@@ -11,6 +11,11 @@ body
   line-height: 14px;
 }
 
+A:hover
+{ 
+  color: #aa0000;
+}
+
 #topbar
 { 
   padding: 0 0 15px 0;

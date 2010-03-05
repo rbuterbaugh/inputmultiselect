@@ -1,3 +1,15 @@
+/*!
+ * jQuery rgbmultiselect plugin v1.0
+ *  http://ryan.buterbaugh.org/rgbmultiselect/
+ * 
+ * Copyright (c) 2010 Ryan Buterbaugh
+ *  http://ryan.buterbaugh.org/
+ *
+ * Dual licensed under the MIT and GPL licenses:
+ *   http://www.opensource.org/licenses/mit-license.php
+ *   http://www.gnu.org/licenses/gpl.html
+ */
+
 (function($) {
    $.fn.extend({
 		 rgbmultiselect: function(prefs) {
