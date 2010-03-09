@@ -1,5 +1,5 @@
 /*!
- * jQuery rgbmultiselect plugin v1.0
+ * jQuery rgbmultiselect plugin v1.0.1
  *  http://ryan.buterbaugh.org/rgbmultiselect/
  * 
  * Copyright (c) 2010 Ryan Buterbaugh
@@ -932,11 +932,11 @@
        $sSelect.find("OPTION").each(
 	 function() {
 	   var value=$(this).val();
-	   var rel=$(this).attr("rel");
+	   var props=$(this).attr(prefs.optionPropertiesField);
 	   var text=$(this).text();
 	   var selected=$(this).is(":selected");
 	   data["_"+value]={
-	     rel:rel,
+	     props:props,
 	     text:text,
 	     selected:selected,
 	     filtered:false,
@@ -995,11 +995,11 @@
      }
 
      function objTypeIs(o,type) {
-       return selectCache[o].rel && selectCache[o].rel.indexOf(type) > -1;
+       return selectCache[o].props && selectCache[o].props.indexOf(type) > -1;
      }
 
      function objTypeNot(o,type) {
-       return !selectCache[o].rel || selectCache[o].rel.indexOf(type) == -1;
+       return !selectCache[o].props || selectCache[o].props.indexOf(type) == -1;
      }
 
      function debug(str) {
@@ -1056,6 +1056,7 @@
      //     %c - fieldTextFormatOnBlurNumToShow
      fieldTextFormatOnBlur: "%o",
      fieldTextFormatOnBlurNumToShow: -1,
-     fieldTextFormatOnBlurIfLTENumToShow: "%o"
+     fieldTextFormatOnBlurIfLTENumToShow: "%o",
+     optionPropertiesField: "rel"
    };
  })(jQuery);
