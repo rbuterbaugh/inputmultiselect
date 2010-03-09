@@ -1,5 +1,5 @@
 /*!
- * jQuery rgbmultiselect plugin v1.0.1
+ * jQuery rgbmultiselect plugin v1.0.2
  *  http://ryan.buterbaugh.org/rgbmultiselect/
  * 
  * Copyright (c) 2010 Ryan Buterbaugh
@@ -161,6 +161,13 @@
 			selectOnEnterAndReset();
 		        e.stopPropagation();
 			return false;
+
+		      case KEY.TAB:
+		        if (prefs.tabKeySelectsSingleFilteredUnselectedItem && optionsNumMatching == 1) {
+			  selectFilteredSelection();
+			}
+		        break;
+
 
 		      case KEY.UP:
 		        if (!$sOptions.is(":visible")) {
@@ -422,8 +429,7 @@
        return originalText;
      }
 
-     function selectOnEnterAndReset() {
-       if (optionsNumMatching == 1) {
+     function selectFilteredSelection() {
 	 // can't text filter on selected options
 	 if (numOptionsSelected() >= prefs.maxSelections && prefs.maxSelections > -1) {
 	   return;
@@ -446,6 +452,11 @@
 	 $sInput.focus().val("");
 	 filterOptions();
 	 updateUnselectedHeight();
+     }
+
+     function selectOnEnterAndReset() {
+       if (optionsNumMatching == 1) {
+	 selectFilteredSelection();
        } else {
 	 if (optionsKeyboardCurrentId !== null && (optionsKeyboardCurrentType == "clearlist" ||
 						   !selectCache[optionsKeyboardCurrentId].filtered)) {
@@ -1057,6 +1068,7 @@
      fieldTextFormatOnBlur: "%o",
      fieldTextFormatOnBlurNumToShow: -1,
      fieldTextFormatOnBlurIfLTENumToShow: "%o",
-     optionPropertiesField: "rel"
+     optionPropertiesField: "rel",
+     tabKeySelectsSingleFilteredUnselectedItem: false
    };
  })(jQuery);
