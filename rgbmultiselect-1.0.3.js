@@ -1,5 +1,5 @@
 /*!
- * jQuery rgbmultiselect plugin v1.0.2
+ * jQuery rgbmultiselect plugin v1.0.3
  *  http://ryan.buterbaugh.org/rgbmultiselect/
  * 
  * Copyright (c) 2010 Ryan Buterbaugh
@@ -142,8 +142,10 @@
 
      $sInput.blur(
        function() {
-	 hasFocus=0;
-	 leaveFieldTimeout = setTimeout(function() { leaveField(); },200);
+	 if (hasFocus > 0) {
+	   hasFocus=0;
+	   leaveFieldTimeout = setTimeout(function() { leaveField(); },200);
+	 }
        }
      );
 
@@ -166,6 +168,8 @@
 		        if (prefs.tabKeySelectsSingleFilteredUnselectedItem && optionsNumMatching == 1) {
 			  selectFilteredSelection();
 			}
+		        hasFocus=0;
+			leaveField();
 		        break;
 
 
