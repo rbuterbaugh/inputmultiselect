@@ -11,7 +11,8 @@ $(document).ready(function() {
   $("#picknumbers").rgbmultiselect();
 
   $("#pick3numbers").rgbmultiselect({
-				      maxSelections: 3
+				      maxSelections: 3,
+				      tabKeySelectsSingleFilteredUnselectedItem: true
 				    });
 
   $("#pickone").rgbmultiselect();
