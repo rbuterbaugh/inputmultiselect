@@ -1,5 +1,5 @@
 /*!
- * jQuery rgbmultiselect plugin v1.0.3
+ * jQuery rgbmultiselect plugin v1.0.4
  *  http://ryan.buterbaugh.org/rgbmultiselect/
  * 
  * Copyright (c) 2010 Ryan Buterbaugh
@@ -77,7 +77,6 @@
      var unselectedOriginalHeight=null;
 
      var $sInput=buildInputField();
-     var inputWidth=parseInt($sInput.width(),10);
 
      var $sOptions=buildOptionsContainer();
      $(document.body).append($sOptions);
@@ -791,7 +790,7 @@
      function showOptions() {
        positionOptionsContainer();
        if (!$sOptions.is(":visible")) {
-	 $sOptions.show();
+	 $sOptions.css({width:parseInt($sInput.width(),10)+"px"}).show();
        }
 
        // make sure we get the original height of the unselected list before we manipulate it
@@ -847,8 +846,7 @@
 
      function buildOptionsContainer() {
        var optContainer=$e("div");
-       optContainer.hide().addClass("jquery_rgbmultiselect_options_container")
-	 .attr("id",optionsId).css({width:inputWidth+"px"});
+       optContainer.hide().addClass("jquery_rgbmultiselect_options_container").attr("id",optionsId);
 
        return optContainer;
      }
