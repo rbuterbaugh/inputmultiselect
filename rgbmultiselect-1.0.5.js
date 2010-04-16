@@ -1,5 +1,5 @@
 /*!
- * jQuery rgbmultiselect plugin v1.0.4
+ * jQuery rgbmultiselect plugin v1.0.5
  *  http://ryan.buterbaugh.org/rgbmultiselect/
  * 
  * Copyright (c) 2010 Ryan Buterbaugh
@@ -77,6 +77,7 @@
      var unselectedOriginalHeight=null;
 
      var $sInput=buildInputField();
+     $sSelect.hide();
 
      var $sOptions=buildOptionsContainer();
      $(document.body).append($sOptions);
@@ -971,9 +972,9 @@
        } else {
 	 inputField=$e("input");
 	 inputField.attr({type:"text",id:inputId,name:inputId}).css({width:selectWidth+"px"});
+	 $sSelect.after(inputField);
        }
        inputField.addClass("jquery_rgbmultiselect_input").attr("autocomplete","off").val(prefs.inputDefaultText);
-       $sSelect.after(inputField).hide();
        return inputField;
      }
 
