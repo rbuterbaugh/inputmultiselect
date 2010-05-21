@@ -250,9 +250,11 @@
 			}
 		      });
 
-     /*BEGINTEST*/ if (prefs.runTests) {
+     /*BEGINTEST*/
+     if (prefs.runTests) {
        runTests();
-     } /*ENDTEST*/
+     }
+     /*ENDTEST*/
 
      // end bindings, begin function definitions
 
