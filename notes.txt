@@ -7,5 +7,3 @@ callbacks
 expose call to re-parse select box
 
 clean up css for input box
-
-backfill changes from swa
