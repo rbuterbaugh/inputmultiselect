@@ -18,17 +18,28 @@ if (!-f "rgbmultiselect-$new_release.js" || !-f "rgbmultiselect-$old_release.js"
     exit;
 }
 
+open(F,"rgbmultiselect-$new_release.js");
+@lines=<F>;
+close F;
+$line=join('',@lines);
+$line=~s/\/\*BEGINTEST\*\/.*?\/\*ENDTEST\*\///gs;
+open(F,">rgbmultiselect-$new_release.js.notest");
+print F $line;
+close F;
+
 # minify new release js
-`jsmin <rgbmultiselect-$new_release.js >rgbmultiselect-$new_release.min.js.tmp`;
+`jsmin <rgbmultiselect-$new_release.js.notest >rgbmultiselect-$new_release.min.js.tmp`;
 `cat rgbmultiselect.copyright.txt|sed 's/%VERSION%/$new_release/g'|sed 's/%YEAR%/$year/g'>rgbmultiselect-$new_release.min.js`;
 `cat rgbmultiselect-$new_release.min.js.tmp >> rgbmultiselect-$new_release.min.js`;
 `rm rgbmultiselect-$new_release.min.js.tmp`;
 
 # pack new release js
-`php ~/packer/example-file.php rgbmultiselect-$new_release.js rgbmultiselect-$new_release.packed.js.tmp`;
+`php ~/packer/example-file.php rgbmultiselect-$new_release.js.notest rgbmultiselect-$new_release.packed.js.tmp`;
 `cat rgbmultiselect.copyright.txt|sed 's/%VERSION%/$new_release/g'|sed 's/%YEAR%/$year/g'>rgbmultiselect-$new_release.packed.js`;
 `cat rgbmultiselect-$new_release.packed.js.tmp >> rgbmultiselect-$new_release.packed.js`;
 `rm rgbmultiselect-$new_release.packed.js.tmp`;
+
+`rm rgbmultiselect-$new_release.js.notest`;
 
 # extract example package
 `unzip rgbmultiselect-$old_release.zip`;
