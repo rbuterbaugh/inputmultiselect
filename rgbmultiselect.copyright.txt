@@ -1,8 +1,8 @@
 /*!
- * jQuery rgbmultiselect plugin v1.0.5
+ * jQuery rgbmultiselect plugin v%VERSION%
  *  http://ryan.buterbaugh.org/rgbmultiselect/
  * 
- * Copyright (c) 2010 Ryan Buterbaugh
+ * Copyright (c) %YEAR% Ryan Buterbaugh
  *  http://ryan.buterbaugh.org/
  *
  * Dual licensed under the MIT and GPL licenses:
