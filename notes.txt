@@ -1,9 +1,12 @@
 add rel="subheader" type
  - option to show subheaders when filtering
+ - option to place checkboxes in front of subheaders that will auto-check
+   all child options... should be able to enable/disable per subheader
 
-callbacks
- - when user selects/unselects an option
-
-expose call to re-parse select box
-
-clean up css for input box
+input box interaction
+ - add current selections to input field upon selection
+ - allow removal of items using input box
+  - if user clicks on an item, it should be automatically selected
+  - we will need to tightly manage how the input box interaction works,
+    probably by constantly re-populating it and managing primarily via
+    a backing object

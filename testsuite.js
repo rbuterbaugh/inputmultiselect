@@ -4,5 +4,7 @@ $(document).ready(function() {
 						       fieldTextFormatOnBlur: "%c: %o + %a more",
 						       fieldTextFormatOnBlurNumToShow: 3,
 						       fieldTextFormatOnBlurIfLTENumToShow: "%c: %o"
-						     });
+						     })
+		    .bind("onChange",function(event,data) {
+			  });
 		  });

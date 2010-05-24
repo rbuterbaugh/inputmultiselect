@@ -46,6 +46,9 @@
 		 },
 		 reparseSelect: function() {
 		   return this.trigger("reparseSelect");
+		 },
+		 onChange: function(handler) {
+		   return this.bind("onChange",handler);
 		 }
 	       });
 
@@ -78,6 +81,7 @@
      var optionsKeyboardCurrentId=null,optionsKeyboardCurrentType=null;
      var clearInputField=true;
      var unselectedOriginalHeight=null;
+     var selectCallback=null,unselectCallback=null;
 
      var currentExecutionTimestamp=(new Date()).valueOf();
      /*BEGINTEST*/var testsRun=0;
@@ -92,9 +96,7 @@
 
      var $sIframe=buildIE6Iframe();
 
-     var selectCache;
-
-     selectCache=getSelectOptions();
+     var selectCache=getSelectOptions();
      updateFieldText();
 
      $sSelect.bind("reparseSelect",function() {
@@ -174,13 +176,13 @@
 		      case KEY.RETURN:
 			e.preventDefault();
 			blockSubmit = true;
-			selectOnEnterAndReset();
+			selectCurrentKeyboardChoice();
 		        e.stopPropagation();
 			return false;
 
 		      case KEY.TAB:
 		        if (prefs.tabKeySelectsSingleFilteredUnselectedItem && optionsNumMatching == 1) {
-			  selectFilteredSelection();
+			  selectCurrentKeyboardChoice();
 			}
 		        hasFocus=0;
 			leaveField();
@@ -227,7 +229,7 @@
 			  clearTimeout(keypressTimeout);
 			}
 		        keypressTimeout = setTimeout(function() {
-						       filterOptions();
+						       filterOptions($.trim($sInput.val()));
 						       updateUnselectedHeight();
 						       positionOptionsContainer();
 						     },10);
@@ -265,11 +267,15 @@
        updateFieldText();
      }
 
-     function resetKeySelection() {
+     function resetAndUpdateKeySelection() {
        if (optionsKeyboardCurrentId !== null) {
 	 $("#"+baseCheckboxId+"_"+optionsKeyboardCurrentType+optionsKeyboardCurrentId)
 	   .parent().removeClass("jquery_rgbmultiselect_options_item_arrownav_selected");
 	 optionsKeyboardCurrentId=optionsKeyboardCurrentType=null;
+       }
+       if (arguments.length == 2) {
+	 optionsKeyboardCurrentId=arguments[0];
+	 optionsKeyboardCurrentType=arguments[1];
        }
      }
 
@@ -277,37 +283,42 @@
        var options=getAllVisibleOptions();
        if (optionsKeyboardCurrentId === null || (optionsKeyboardCurrentType != "clearlist" &&
 						 selectCache[optionsKeyboardCurrentId].filtered)) {
-	 resetKeySelection();
-	 optionsKeyboardCurrentId=options[0].id;
-	 optionsKeyboardCurrentType=options[0].type;
+	 resetAndUpdateKeySelection(options[0].id,options[0].type);
        } else {
-	 var curIndex=0;
-	 var l=options.length;
-	 for (var i=0;i<l;i++) {
-	   if (options[i].id == optionsKeyboardCurrentId) {
-	     curIndex=i;
-	   }
+	 var curIndex=getCurrentKeyboardSelectionIndex(options)+num;
+	 while (curIndex < 0) {
+	   curIndex+=options.length; // just in case our page up/down distance is greater than our options.length 
 	 }
-	 curIndex+=num;
-	 if (curIndex < 0) {
-	   curIndex+=options.length;
-	 } else if (curIndex >= options.length) {
+	 if (curIndex >= options.length) {
 	   curIndex=curIndex % options.length;
 	 }
-	 resetKeySelection();
-	 optionsKeyboardCurrentId=options[curIndex].id;
-	 optionsKeyboardCurrentType=options[curIndex].type;
+	 resetAndUpdateKeySelection(options[curIndex].id,options[curIndex].type);
        }
        var checkbox=$("#"+baseCheckboxId+"_"+optionsKeyboardCurrentType+optionsKeyboardCurrentId);
        var parent=checkbox.parent();
        parent.addClass("jquery_rgbmultiselect_options_item_arrownav_selected");
-       var firstUn=firstUnselected(options);
+       scrollToMiddleOfItem(parent,options);
+     }
+
+     function getCurrentKeyboardSelectionIndex(visibleOptions) {
+       var curIndex=0;
+       var l=visibleOptions.length;
+       for (var i=0;i<l;i++) {
+	 if (visibleOptions[i].id == optionsKeyboardCurrentId) {
+	   curIndex=i;
+	 }
+       }
+       return curIndex;
+     }
+
+     function scrollToMiddleOfItem(targetItem,visibleOptions) {
+       var firstUn=firstUnselected(visibleOptions);
        var firstUnselectedOffset=0;
        if (firstUn != "") {
 	 firstUnselectedOffset=$("#"+baseCheckboxId+"_unselected"+firstUn).parent().position().top;
        }
        var unselContainer=$sOptions.children(".jquery_rgbmultiselect_options_unselected");
-       var scrollOffset=parent.position().top-firstUnselectedOffset-(unselContainer.height()/2);
+       var scrollOffset=targetItem.position().top-firstUnselectedOffset-(unselContainer.height()/2);
        if (scrollOffset < 0 || optionsKeyboardCurrentType != "unselected") {
 	 scrollOffset=0;
        }
@@ -359,8 +370,8 @@
        return options.concat(stickyOptions,selectedOptions,unselectedOptions);
      }
 
-     function filterOptions() {
-       var str=$.trim($sInput.val());
+     function filterOptions(str) {
+       str+="";
        var strParts=str.split(/ +/);
        if (optionsNumMatching == 1) {
 	 optionsOneSelectedMatch.parent().removeClass("jquery_rgbmultiselect_options_item_singlefiltered");
@@ -378,27 +389,29 @@
 	   var optionText=cur.siblings("SPAN");
 	   var parentItem=cur.parent();
 	   if (objTypeNot(o,"default") && !selectCache[o].selected &&
-	       !parentItem.hasClass("jquery_rgbmultiselect_options_selected_item_marker")) {
-	     if (str == "" || andMatch(selectCache[o].text.toLowerCase(),strParts)) {
+	       !parentItem.hasClass("jquery_rgbmultiselect_options_item_is_selected")) {
+	     // if the item has been selected, we don't want to alter its state (show/hide) when filtering
+	     var isAMatch=(str == "" || andMatch(selectCache[o].text.toLowerCase(),strParts));
+	     if (isAMatch) {
 	       if (str == "") {
 		 restoreOptionText(optionText,o);
 	       } else {
 		 optionText.html(replaceAll(selectCache[o].text,strParts));
 	       }
 	       optionsNumMatching++;
+	       // store this item and type in case it is a single match
 	       optionsOneSelectedMatch=cur;
 	       optionsOneSelectedMatchType=type;
 	       parentItem.show();
-	       selectCache[o].filtered=false;
 	     } else {
 	       restoreOptionText(optionText,o);
 	       parentItem.removeClass("jquery_rgbmultiselect_options_item_singlefiltered").hide();
-	       selectCache[o].filtered=true;
 	       // if the currently key-selected item gets filtered out, reset key selection
 	       if (optionsKeyboardCurrentId == o) {
-		 resetKeySelection();
+		 resetAndUpdateKeySelection();
 	       }
 	     }
+	     selectCache[o].filtered=!isAMatch;
 	   }
 	 }
        }
@@ -483,11 +496,11 @@
 	   selectOption(itemId);
 	 }
 	 $sInput.focus().val("");
-	 filterOptions();
+	 filterOptions("");
 	 updateUnselectedHeight();
      }
 
-     function selectOnEnterAndReset() {
+     function selectCurrentKeyboardChoice() {
        if (optionsNumMatching == 1) {
 	 selectFilteredSelection();
        } else {
@@ -506,7 +519,7 @@
 	   // safer to go up than down in case we're on the last unselected item, unless it's an exclusive
 	   // option, in which case we should just clear
 	   if (toBeSelectedType == "clearlist" || objIsExclusive(toBeSelectedId)) {
-	     resetKeySelection();
+	     resetAndUpdateKeySelection();
 	   } else {
 	     keyGo(1);
 	   }
@@ -649,34 +662,39 @@
        $("#"+baseCheckboxId+"_clearlist").attr("checked","checked");
      }
 
+     function isItemDisplayed(o,type) {
+       return (selectCache[o].selected && type == "selected") || (!selectCache[o].selected && type == "unselected");
+     }
+
+     function buildItemCheckBox(type,o) {
+       var optId=baseCheckboxId+'_'+type+o;
+       var itemCheckbox=$e("input").attr({type:'checkbox',id:optId,name:optId})
+	 .addClass("jquery_rgbmultiselect_options_item_checkbox")
+	 .addClass('jquery_rgbmultiselect_options_'+type+'_item_checkbox');
+
+       if (type == "selected") {
+	 itemCheckbox.attr("checked","checked");
+       }
+
+       itemCheckbox.click(function(e) {$sInput.focus();}).mousedown(function(e) {e.stopPropagation();});
+       return itemCheckbox;
+     }
+
      function buildOptionsCheckboxList(items,type) {
        for (var o in selectCache) {
 	 if (typeof o == "string" && objTypeNot(o,"default") && objTypeNot(o,"sticky")) {
 	   var item=$e("div").addClass("jquery_rgbmultiselect_options_item")
 	     .addClass('jquery_rgbmultiselect_options_'+type+'_item').attr("id",optionsId+"_item"+o);
 
-	   var displayed=false;
-	   if ((selectCache[o].selected && type == "selected") ||
-	     (!selectCache[o].selected && type == "unselected")) {
-	     displayed=true;
-	   } else {
-	     if (type == "unselected") {
-	       item.addClass("jquery_rgbmultiselect_options_selected_item_marker");
-	     }
+	   var displayed=isItemDisplayed(o,type);
+
+	   if (!displayed && type == "unselected") {
+	     item.addClass("jquery_rgbmultiselect_options_item_is_selected");
 	   }
+
 	   item.css("display",(displayed?"block":"none"));
 
-	   var optId=baseCheckboxId+'_'+type+o;
-	   var itemCheckbox=$e("input").attr({type:'checkbox',id:optId,name:optId})
-	     .addClass("jquery_rgbmultiselect_options_item_checkbox")
-	     .addClass('jquery_rgbmultiselect_options_'+type+'_item_checkbox');
-
-	   if (type == "selected") {
-	     itemCheckbox.attr("checked","checked");
-	   }
-
-	   itemCheckbox.click(function(e) {$sInput.focus();}).mousedown(function(e) {e.stopPropagation();});
-
+	   var itemCheckbox=buildItemCheckBox(type,o);
 	   itemCheckbox.appendTo(item);
 
 	   var itemText=$e("span").text(selectCache[o].text).appendTo(item);
@@ -725,7 +743,7 @@
        preselectCommon(value);
        $("#"+baseCheckboxId+"_selected"+value).attr("checked","checked").parent().show();
        $("#"+baseCheckboxId+"_unselected"+value).removeAttr("checked").parent()
-	 .addClass("jquery_rgbmultiselect_options_selected_item_marker").hide();
+	 .addClass("jquery_rgbmultiselect_options_item_is_selected").hide();
        selectCommon(value);
        updateUnselectedHeight();
      }
@@ -735,7 +753,7 @@
        $sSelect.find("OPTION[value='"+value.substr(1)+"']").removeAttr("selected");
        $("#"+baseCheckboxId+"_selected"+value).attr("checked","checked").parent().hide();
        $("#"+baseCheckboxId+"_unselected"+value).removeAttr("checked").parent()
-	 .removeClass("jquery_rgbmultiselect_options_selected_item_marker").show();
+	 .removeClass("jquery_rgbmultiselect_options_item_is_selected").show();
        unselectCommon(value);
        updateUnselectedHeight();
      }
@@ -777,6 +795,7 @@
        }
        positionOptionsContainer();
        $sOptions.children(".jquery_rgbmultiselect_options_helptext").text(getHelpText(numOptionsSelected()));
+       $sSelect.trigger("onChange",[selectCache[value]]);
      }
 
      function unselectCommon(value) {
@@ -787,6 +806,7 @@
        }
        positionOptionsContainer();
        $sOptions.children(".jquery_rgbmultiselect_options_helptext").text(getHelpText(numOptionsSelected()));
+       $sSelect.trigger("onChange",[selectCache[value]]);
      }
 
      function clearAll() {
@@ -870,7 +890,7 @@
      function leaveField() {
        hideOptions();
        clearInputField=true;
-       resetKeySelection();
+       resetAndUpdateKeySelection();
        updateFieldText();
      }
 
@@ -897,7 +917,7 @@
 
      function updateFieldText() {
        $sInput.val("").removeClass("jquery_rgbmultiselect_blurred");
-       filterOptions();
+       filterOptions("");
        var vals = buildFieldText();
        if (vals[0] != "") {
 	 $sInput.addClass(vals[0]);
@@ -909,9 +929,9 @@
        var returnVals=new Array(2);
        returnVals[0]=""; // class to add
 
-       var replacementsO=""; // options to show
-       var replacementsC=0; // total selected
-       var replacementsA=0; // additional selected (other than options to show)
+       var replacementsO=""; // selected options to show
+       var replacementsC=0; // total number of options selected
+       var replacementsA=0; // additional number of options selected (other than options to show)
        var numAdded=0;
        for (var o in selectCache) {
 	 if (typeof o == "string") {
@@ -926,11 +946,12 @@
 	 }
        }
 
+       // easier than conditionally including the comma in the loop
+       replacementsO=replacementsO.substr(0,replacementsO.length-2);
+
        if (prefs.fieldTextFormatOnBlurNumToShow > 0) {
 	 replacementsA=replacementsC-prefs.fieldTextFormatOnBlurNumToShow;
        }
-
-       replacementsO=replacementsO.substr(0,replacementsO.length-2);
 
        if (replacementsC == 0) {
 	 if (prefs.clearAllSelectNoneAvailable && prefs.clearAllSelectNoneTextShowOnBlur &&
@@ -997,7 +1018,8 @@
 	     text:text,
 	     selected:selected,
 	     filtered:false,
-	     disabled:false
+	     obj:$(this), // for the benefit of the callback
+	     val:value // for the benefit of the callback
 	   };
 	 }
        );
@@ -1112,6 +1134,29 @@
        reparseSelect();
        ret=buildFieldText();
        assert("5: Zero, One, Two + 2 more",ret[1],"new field value is '5: Zero, One, Two + 2 more'");
+
+       // test object typing
+       assertFalse(objIsExclusive("_0"),"option 0 is not exclusive");
+       assertTrue(objIsExclusive("_10"),"option 10 is exclusive");
+       assertTrue(objTypeIs("_0","sticky"),"option 0 is sticky (objTypeIs)");
+       assertFalse(objTypeNot("_0","sticky"),"option 0 is sticky (objTypeNot)");
+       assertFalse(objTypeIs("_1","sticky"),"option 1 is not sticky (objTypeIs)");
+       assertTrue(objTypeNot("_1","sticky"),"option 1 is not sticky (objTypeNot)");
+       
+       // test input field
+       assert($("#picknumbers_rgbmultiselect").size(),1,"input field exists");
+       assert($("#picknumbers_rgbmultiselect").attr("autocomplete"),"off","input field has autocomplete turned off");
+
+       // test that option array is populated correctly
+       var tmpCache=getSelectOptions();
+       assertFalse(tmpCache["_0"].filtered,"0 is not filtered");
+       assertTrue(tmpCache["_0"].selected,"0 is selected");
+       assert(tmpCache["_0"].props,"sticky","0 has sticky as a property");
+
+       // test selectCache accessors
+       assert(numOptionsSelected(),5,"5 options are selected");
+       assertTrue(anyNonstickyOptionsSelected(),"nonsticky options are selected");
+       assertTrue(anyOptionsSticky(),"at least one option is sticky");
        
        // print report
        suitefinished();
