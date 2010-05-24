@@ -1,0 +1,54 @@
+#!/usr/bin/perl
+
+$old_release=$ARGV[0];
+$new_release=$ARGV[1];
+
+($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+$year+=1900;
+
+for ($i=0;$i<2;$i++) {
+    if ($ARGV[$i]!~/^[0-9]+\.[0-9]+\.[0-9]+$/) {
+	print "Error: please specify two arguments, the old release version and the new release version, of the form 0.0.0\n";
+	exit;
+    }
+}
+
+if (!-f "rgbmultiselect-$new_release.js" || !-f "rgbmultiselect-$old_release.js") {
+    print "Error: javascript file is missing\n";
+    exit;
+}
+
+# minify new release js
+`jsmin <rgbmultiselect-$new_release.js >rgbmultiselect-$new_release.min.js.tmp`;
+`cat rgbmultiselect.copyright.txt|sed 's/%VERSION%/$new_release/g'|sed 's/%YEAR%/$year/g'>rgbmultiselect-$new_release.min.js`;
+`cat rgbmultiselect-$new_release.min.js.tmp >> rgbmultiselect-$new_release.min.js`;
+`rm rgbmultiselect-$new_release.min.js.tmp`;
+
+# pack new release js
+`php ~/packer/example-file.php rgbmultiselect-$new_release.js rgbmultiselect-$new_release.packed.js.tmp`;
+`cat rgbmultiselect.copyright.txt|sed 's/%VERSION%/$new_release/g'|sed 's/%YEAR%/$year/g'>rgbmultiselect-$new_release.packed.js`;
+`cat rgbmultiselect-$new_release.packed.js.tmp >> rgbmultiselect-$new_release.packed.js`;
+`rm rgbmultiselect-$new_release.packed.js.tmp`;
+
+# extract example package
+`unzip rgbmultiselect-$old_release.zip`;
+
+# build example package directory
+`mv rgbmultiselect-$old_release rgbmultiselect-$new_release`;
+`rm rgbmultiselect-$new_release/rgbmultiselect-$old_release.js rgbmultiselect-$new_release/rgbmultiselect-$old_release.min.js`;
+`cp rgbmultiselect-$new_release.js rgbmultiselect-$new_release/`;
+`cp rgbmultiselect-$new_release.min.js rgbmultiselect-$new_release/`;
+`cat rgbmultiselect-$new_release/index.html|sed 's/$old_release/$new_release/g'>rgbmultiselect-$new_release/index.html`;
+`zip -r rgbmultiselect-$new_release.zip rgbmultiselect-$new_release/`;
+`rm -rf rgbmultiselect-$new_release/`;
+`cat index.html|sed 's/$old_release/$new_release/g'>index.html.tmp`;
+`mv index.html.tmp index.html`;
+
+# move old files
+`svn mv rgbmultiselect-$old_release.js oldversions/`;
+`svn mv rgbmultiselect-$old_release.min.js oldversions/`;
+`svn mv rgbmultiselect-$old_release.packed.js oldversions/`;
+`svn mv rgbmultiselect-$old_release.zip oldversions/`;
+
+# add new files
+`svn add rgbmultiselect-$new_release.js rgbmultiselect-$new_release.min.js rgbmultiselect-$new_release.packed.js rgbmultiselect-$new_release.zip`;
