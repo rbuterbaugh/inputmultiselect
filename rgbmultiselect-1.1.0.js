@@ -15,7 +15,7 @@
 		 rgbmultiselect: function(prefs) {
 
 		   if (typeof prefs != "undefined") {
-		     if (!jQuery.fn.getSelection) {
+		     if (!jQuery.fn.caret) {
 		       prefs.interactiveInputBox=false;
 		     }
 
