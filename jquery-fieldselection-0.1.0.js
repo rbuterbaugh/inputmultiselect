@@ -6,7 +6,8 @@
  * Copyright (c) 2006, Alex Brem
  * All rights reserved.
  * 
- * Redistribution and use of this software in source and binary forms, with or without modification, are
+ * Redistribution and use of this software in source and
+ * binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
  * 
  * Redistributions of source code must retain the above
@@ -42,12 +43,12 @@
             var l = e.selectionEnd - e.selectionStart;
             return { start: e.selectionStart, end: e.selectionEnd, length: l, text: e.value.substr(e.selectionStart, l) };
           }) ||
-         /* exploder */
+           /* exploder */
          (document.selection && function() {
             e.focus();
             var r = document.selection.createRange();
             if (r == null) {
-              return { start: 0, end: e.value.length, length: 0 }
+              return { start: 0, end: e.value.length, length: 0 };
             }
             var re = e.createTextRange();
             var rc = re.duplicate();
@@ -55,7 +56,7 @@
             rc.setEndPoint('EndToStart', re);
             return { start: rc.text.length, end: rc.text.length + r.text.length, length: r.text.length, text: r.text };
           }) ||
-         /* browser not supported */
+           /* browser not supported */
          function() {
            return { start: 0, end: e.value.length, length: 0 };
          }
@@ -70,13 +71,13 @@
             e.value = e.value.substr(0, e.selectionStart) + text + e.value.substr(e.selectionEnd, e.value.length);
             return this;
           }) ||
-         /* exploder */
+           /* exploder */
          (document.selection && function() {
             e.focus();
             document.selection.createRange().text = text;
             return this;
           }) ||
-         /* browser not supported */
+           /* browser not supported */
          function() {
            e.value += text;
            return this;
