@@ -82,9 +82,9 @@
      var optionsKeyboardCurrentId=null,optionsKeyboardCurrentType=null;
      var clearInputField=true;
      var unselectedOriginalHeight=null;
-     var selectCallback=null,unselectCallback=null;
 
      var currentExecutionTimestamp=(new Date()).valueOf();
+
      /*BEGINTEST*/var testsRun=0;
      var testsPassed=0;
      var testsFailed=0;/*ENDTEST*/
@@ -105,16 +105,7 @@
 		   });
 
      if (prefs.buildOptionsInBackground) {
-       $(document).ready(function() {
-			   setTimeout(function() {
-					buildOptions();
-					// when the page reloads after pressing back, IE sometimes does not
-					// have the selected options checked...
-					if ($.browser.msie) {
-					  $sOptions.find(".jquery_rgbmultiselect_options_selected_item .jquery_rgbmultiselect_options_item_checkbox").attr("checked","checked");
-					}
-				      },10);
-			 });
+       $(document).ready(function() { setTimeout(function() { buildOptions(); },10); });
      }
 
      // set up handlers
@@ -606,6 +597,12 @@
 			 $(this).find(".jquery_rgbmultiselect_options_item_hovered")
 			   .removeClass("jquery_rgbmultiselect_options_item_hovered");
 		       });
+
+       // when the page reloads after pressing back, IE sometimes does not
+       // have the selected options checked...
+       if ($.browser.msie) {
+	 $sOptions.find(".jquery_rgbmultiselect_options_selected_item .jquery_rgbmultiselect_options_item_checkbox").attr("checked","checked");
+       }
      }
 
      function buildStickyCheckboxList(stickyObj) {
