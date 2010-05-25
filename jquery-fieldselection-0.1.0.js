@@ -1,6 +1,7 @@
 /*
  * jQuery plugin: fieldSelection - v0.1.0 - last change: 2006-12-16
  * (c) 2006 Alex Brem <alex@0xab.cd> - http://blog.0xab.cd
+ * 
  * fieldSelection - a jQuery plugin
  * 
  * Copyright (c) 2006, Alex Brem
