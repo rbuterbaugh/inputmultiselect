@@ -26,10 +26,11 @@
 		       prefs.fieldTextFormatOnBlurIfLTENumToShow = prefs.fieldTextFormatOnBlur;
 		     }
 
-		     // if the user doesn't specify max selections, use their help text
+		     // if the user doesn't specify max selections text, use their help text
 		     // as the maxSelections help text if it exists
 		     if (typeof prefs.helpText != "undefined" &&
-			 typeof prefs.maxSelections == "undefined") {
+			 typeof prefs.maxSelections != "undefined" &&
+			 typeof prefs.helpTextMaxSelectionsReached == "undefined") {
 		       prefs.helpTextMaxSelectionsReached=prefs.helpText;
 		     }
 		   }
@@ -37,18 +38,18 @@
 		   prefs = $.extend({}, $.rgbmultiselector.defaults, prefs);
 
 		   return this.each(function() {
-				      var myPrefs=prefs;
+				      var myPrefs=$.extend({}, prefs);
 				      if (!$(this).attr("multiple")) {
 					myPrefs.allOptionsExclusive=true;
 				      }
 				      new $.rgbmultiselector(this, myPrefs);
 				    });
 		 },
-		 reparseSelect: function() {
-		   return this.trigger("reparseSelect");
+		 reparse: function() {
+		   return this.trigger("reparse");
 		 },
-		 onChange: function(handler) {
-		   return this.bind("onChange",handler);
+		 change: function(handler) {
+		   return this.bind("change",handler);
 		 }
 	       });
 
@@ -91,16 +92,16 @@
      var $sInput=buildInputField();
      $sSelect.hide();
 
-     var $sOptions=buildOptionsContainer();
+     var $sOptions=buildOuterOptionsContainer();
      $(document.body).append($sOptions);
 
      var $sIframe=buildIE6Iframe();
 
      var selectCache=getSelectOptions();
-     updateFieldText();
+     updateInputFieldText();
 
-     $sSelect.bind("reparseSelect",function() {
-		     reparseSelect();
+     $sSelect.bind("reparse",function() {
+		     reparseSelectList();
 		   });
 
      if (prefs.buildOptionsInBackground) {
@@ -110,14 +111,15 @@
 					// when the page reloads after pressing back, IE sometimes does not
 					// have the selected options checked...
 					if ($.browser.msie) {
-					  $sOptions.find(".jquery_rgbmultiselect_options_selected .jquery_rgbmultiselect_options_item_checkbox").attr("checked","checked");
+					  $sOptions.find(".jquery_rgbmultiselect_options_selected_item .jquery_rgbmultiselect_options_item_checkbox").attr("checked","checked");
 					}
 				      },10);
 			 });
      }
 
      // set up handlers
-     // borrowed from jquery autocomplete by Jorn Zaefferer... prevent form submit when pressing enter key in opera
+     // borrowed from jquery autocomplete by Jorn Zaefferer...
+     // prevent form submit when pressing enter key in opera
      if ($.browser.opera) {
        $(input.form).bind("submit.rgbmultiselect",
 			  function() {
@@ -260,11 +262,11 @@
 
      // end bindings, begin function definitions
 
-     function reparseSelect() {
+     function reparseSelectList() {
        selectCache=getSelectOptions();
        $sOptions.removeClass("jquery_rgbmultiselect_optionsbuilt").html("");
        buildOptions();
-       updateFieldText();
+       updateInputFieldText();
      }
 
      function resetAndUpdateKeySelection() {
@@ -359,10 +361,12 @@
 	 if (typeof o == "string" && objTypeNot(o,"default") && !selectCache[o].filtered) {
 	   if (objTypeIs(o,"sticky")) {
 	     stickyOptions.push({id:o,type:'sticky'});
+	   } else if (prefs.keepSelectedItemsInPlace || !selectCache[o].selected) {
+	     // if we're keeping selected items in place, we just want to add the items in the
+	     // 'unselected' container
+	     unselectedOptions.push({id:o,type:'unselected'});
 	   } else if (selectCache[o].selected) {
 	     selectedOptions.push({id:o,type:'selected'});
-	   } else if (!selectCache[o].selected) {
-	     unselectedOptions.push({id:o,type:'unselected'});
 	   }
 	 }
        }
@@ -388,9 +392,11 @@
 	   var cur=$("#"+baseCheckboxId+"_"+type+o);
 	   var optionText=cur.siblings("SPAN");
 	   var parentItem=cur.parent();
-	   if (objTypeNot(o,"default") && !selectCache[o].selected &&
+	   if (objTypeNot(o,"default") && (!selectCache[o].selected || prefs.keepSelectedItemsInPlace) &&
 	       !parentItem.hasClass("jquery_rgbmultiselect_options_item_is_selected")) {
-	     // if the item has been selected, we don't want to alter its state (show/hide) when filtering
+	     // if the item has been selected, we don't want to alter its state (show/hide) when filtering.
+	     // if we are keeping selected items in place, we want to filter both selected and unselected
+	     // items, so we do not ever set the flag
 	     var isAMatch=(str == "" || andMatch(selectCache[o].text.toLowerCase(),strParts));
 	     if (isAMatch) {
 	       if (str == "") {
@@ -476,28 +482,24 @@
      }
 
      function selectFilteredSelection() {
-	 // can't text filter on selected options
-	 if (numOptionsSelected() >= prefs.maxSelections && prefs.maxSelections > -1) {
-	   return;
-	 }
+       var optionText=optionsOneSelectedMatch.siblings("SPAN");
+       var itemId=getItemId(optionsOneSelectedMatch,optionsOneSelectedMatchType);
 
-	 optionsNumMatching=0;
-	 var optionText=optionsOneSelectedMatch.siblings("SPAN");
-	 var itemId=getItemId(optionsOneSelectedMatch,optionsOneSelectedMatchType);
-	 optionsOneSelectedMatch.parent().removeClass("jquery_rgbmultiselect_options_item_singlefiltered");
+       if (numOptionsSelected() >= prefs.maxSelections && prefs.maxSelections > -1 &&
+	   !selectCache[itemId].selected && !objIsExclusive(itemId)) {
+	 return;
+       }
 
-	 restoreOptionText(optionText,itemId);
+       optionsNumMatching=0;
+       optionsOneSelectedMatch.parent().removeClass("jquery_rgbmultiselect_options_item_singlefiltered");
+       restoreOptionText(optionText,itemId);
+       selectCache[itemId].filtered=false;
 
-	 selectCache[itemId].filtered=false;
+       triggerSelectUnselectAction(optionsOneSelectedMatchType,itemId);
 
-	 if (optionsOneSelectedMatchType == "sticky") {
-	   selectSticky(itemId);
-	 } else {
-	   selectOption(itemId);
-	 }
-	 $sInput.focus().val("");
-	 filterOptions("");
-	 updateUnselectedHeight();
+       $sInput.focus().val("");
+       filterOptions("");
+       updateUnselectedHeight();
      }
 
      function selectCurrentKeyboardChoice() {
@@ -507,41 +509,52 @@
 	 if (optionsKeyboardCurrentId !== null && (optionsKeyboardCurrentType == "clearlist" ||
 						   !selectCache[optionsKeyboardCurrentId].filtered)) {
 
+	   // if we are attempting to select a normal (non-clearing, non-exclusive) option
+	   // and we are at our limit, prevent the selection
 	   if (numOptionsSelected() >= prefs.maxSelections &&
 	       prefs.maxSelections > -1 &&
 	       optionsKeyboardCurrentType != "clearlist" &&
-	       !selectCache[optionsKeyboardCurrentId].selected) {
+	       !selectCache[optionsKeyboardCurrentId].selected &&
+	       !objIsExclusive(optionsKeyboardCurrentId)) {
 	     return;
 	   }
 
 	   var toBeSelectedId=optionsKeyboardCurrentId;
 	   var toBeSelectedType=optionsKeyboardCurrentType;
+
 	   // safer to go up than down in case we're on the last unselected item, unless it's an exclusive
-	   // option, in which case we should just clear
-	   if (toBeSelectedType == "clearlist" || objIsExclusive(toBeSelectedId)) {
-	     resetAndUpdateKeySelection();
-	   } else {
-	     keyGo(1);
+	   // option, in which case we should just clear. ok to skip this if we are keeping selected items
+	   // in place because the list doesn't change in that case
+	   if (!prefs.keepSelectedItemsInPlace) {
+	     if (toBeSelectedType == "clearlist" || objIsExclusive(toBeSelectedId)) {
+	       resetAndUpdateKeySelection();
+	     } else {
+	       keyGo(1);
+	     }
 	   }
 
-	   if (toBeSelectedType == "clearlist") {
-	     clearTextClick();
-	   } else if (toBeSelectedType == "sticky") {
-	     if (selectCache[toBeSelectedId].selected) {
-	       unselectSticky(toBeSelectedId);
-	     } else {
-	       selectSticky(toBeSelectedId);
-	     }
-	   } else {
-	     if (selectCache[toBeSelectedId].selected) {
-	       unselectOption(toBeSelectedId);
-	     } else {
-	       selectOption(toBeSelectedId);
-	     }
-	   }
+	   triggerSelectUnselectAction(toBeSelectedType,toBeSelectedId);
 
 	   // trigger another unselectedOptionsResize
 	   $sInput.focus();
+	 }
+       }
+     }
+
+     function triggerSelectUnselectAction(type,id) {
+       if (type == "clearlist") {
+	 clearTextClick();
+       } else if (type == "sticky") {
+	 if (selectCache[id].selected) {
+	   unselectSticky(id);
+	 } else {
+	   selectSticky(id);
+	 }
+       } else {
+	 if (selectCache[id].selected) {
+	   unselectOption(id);
+	 } else {
+	   selectOption(id);
 	 }
        }
      }
@@ -578,11 +591,13 @@
        var stickyObj=$e("div").addClass("jquery_rgbmultiselect_options_sticky");
        buildStickyCheckboxList(stickyObj).appendTo($sOptions);
 
-       var selectedItems=$e("div").addClass("jquery_rgbmultiselect_options_selected");
-       buildOptionsCheckboxList(selectedItems,"selected").appendTo($sOptions);
+       if (!prefs.keepSelectedItemsInPlace) {
+	 var selectedItems=$e("div").addClass("jquery_rgbmultiselect_options_selected");
+	 buildNormalCheckboxList(selectedItems,"selected").appendTo($sOptions);
+       }
 
        var unselectedItems=$e("div").addClass("jquery_rgbmultiselect_options_unselected");
-       buildOptionsCheckboxList(unselectedItems,"unselected").appendTo($sOptions);
+       buildNormalCheckboxList(unselectedItems,"unselected").appendTo($sOptions);
 
        $sOptions.hover(function() {
 		       },function() {
@@ -663,6 +678,11 @@
      }
 
      function isItemDisplayed(o,type) {
+       // if prefs.keepSelectedItemsInPlace is true, we will only call this function
+       // for items in the unselected list, so always show them (always return true)
+       if (prefs.keepSelectedItemsInPlace) {
+	 return true;
+       }
        return (selectCache[o].selected && type == "selected") || (!selectCache[o].selected && type == "unselected");
      }
 
@@ -672,7 +692,7 @@
 	 .addClass("jquery_rgbmultiselect_options_item_checkbox")
 	 .addClass('jquery_rgbmultiselect_options_'+type+'_item_checkbox');
 
-       if (type == "selected") {
+       if (type == "selected" || (prefs.keepSelectedItemsInPlace && selectCache[o].selected)) {
 	 itemCheckbox.attr("checked","checked");
        }
 
@@ -680,7 +700,7 @@
        return itemCheckbox;
      }
 
-     function buildOptionsCheckboxList(items,type) {
+     function buildNormalCheckboxList(items,type) {
        for (var o in selectCache) {
 	 if (typeof o == "string" && objTypeNot(o,"default") && objTypeNot(o,"sticky")) {
 	   var item=$e("div").addClass("jquery_rgbmultiselect_options_item")
@@ -688,8 +708,14 @@
 
 	   var displayed=isItemDisplayed(o,type);
 
-	   if (!displayed && type == "unselected") {
+	   if (!displayed && type == "unselected" && !prefs.keepSelectedItemsInPlace) {
 	     item.addClass("jquery_rgbmultiselect_options_item_is_selected");
+	   }
+
+	   // if we are keeping selected items in place, we want to set the selected item
+	   // class here even though this is in the 'unselected' container
+	   if (prefs.keepSelectedItemsInPlace && selectCache[o].selected) {
+	     item.addClass("jquery_rgbmultiselect_options_selected_item");
 	   }
 
 	   item.css("display",(displayed?"block":"none"));
@@ -702,10 +728,12 @@
 	   item.click(function(e) {
 			var checkbox=$(this).find(".jquery_rgbmultiselect_options_item_checkbox");
 			var value=getItemId(checkbox,type);
-			if (type == "unselected") {
-			  selectOption(value);
-			} else if (type == "selected") {
+			// this works regardless of the state of keepSelectedItemsInPlace
+			// since we're checking the cache instead of the object type
+			if (selectCache[value].selected) {
 			  unselectOption(value);
+			} else {
+			  selectOption(value);
 			}
 			$sInput.focus();
 			e.stopPropagation();
@@ -741,9 +769,18 @@
 	 return;
        }
        preselectCommon(value);
-       $("#"+baseCheckboxId+"_selected"+value).attr("checked","checked").parent().show();
-       $("#"+baseCheckboxId+"_unselected"+value).removeAttr("checked").parent()
-	 .addClass("jquery_rgbmultiselect_options_item_is_selected").hide();
+       var selectedCheckbox=$("#"+baseCheckboxId+"_selected"+value);
+       var unselectedCheckbox=$("#"+baseCheckboxId+"_unselected"+value);
+
+       if (prefs.keepSelectedItemsInPlace) {
+	 unselectedCheckbox.attr("checked","checked");
+	 unselectedCheckbox.parent().addClass("jquery_rgbmultiselect_options_selected_item");
+       } else {
+	 selectedCheckbox.attr("checked","checked").parent().show();
+	 unselectedCheckbox.removeAttr("checked");
+	 unselectedCheckbox.parent().addClass("jquery_rgbmultiselect_options_item_is_selected").hide();
+       }
+
        selectCommon(value);
        updateUnselectedHeight();
      }
@@ -751,9 +788,18 @@
      // expect a value in the form "_selectvalue"
      function unselectOption(value) {
        $sSelect.find("OPTION[value='"+value.substr(1)+"']").removeAttr("selected");
-       $("#"+baseCheckboxId+"_selected"+value).attr("checked","checked").parent().hide();
-       $("#"+baseCheckboxId+"_unselected"+value).removeAttr("checked").parent()
-	 .removeClass("jquery_rgbmultiselect_options_item_is_selected").show();
+       var selectedCheckbox=$("#"+baseCheckboxId+"_selected"+value);
+       var unselectedCheckbox=$("#"+baseCheckboxId+"_unselected"+value);
+
+       if (prefs.keepSelectedItemsInPlace) {
+	 unselectedCheckbox.removeAttr("checked");
+	 unselectedCheckbox.parent().removeClass("jquery_rgbmultiselect_options_selected_item");
+       } else {
+	 selectedCheckbox.attr("checked","checked").parent().hide();
+	 unselectedCheckbox.removeAttr("checked");
+	 unselectedCheckbox.parent().removeClass("jquery_rgbmultiselect_options_item_is_selected").show();
+       }
+
        unselectCommon(value);
        updateUnselectedHeight();
      }
@@ -795,7 +841,7 @@
        }
        positionOptionsContainer();
        $sOptions.children(".jquery_rgbmultiselect_options_helptext").text(getHelpText(numOptionsSelected()));
-       $sSelect.trigger("onChange",[selectCache[value]]);
+       $sSelect.trigger("change",[selectCache[value]]);
      }
 
      function unselectCommon(value) {
@@ -806,7 +852,7 @@
        }
        positionOptionsContainer();
        $sOptions.children(".jquery_rgbmultiselect_options_helptext").text(getHelpText(numOptionsSelected()));
-       $sSelect.trigger("onChange",[selectCache[value]]);
+       $sSelect.trigger("change",[selectCache[value]]);
      }
 
      function clearAll() {
@@ -891,14 +937,18 @@
        hideOptions();
        clearInputField=true;
        resetAndUpdateKeySelection();
-       updateFieldText();
+       updateInputFieldText();
      }
 
-     function buildOptionsContainer() {
-       var optContainer=$e("div");
-       optContainer.hide().addClass("jquery_rgbmultiselect_options_container").attr("id",optionsId);
-
-       return optContainer;
+     function buildOuterOptionsContainer() {
+       var existingContainer=$("#"+optionsId);
+       if (existingContainer.size() == 0) {
+	 var optContainer=$e("div");
+	 optContainer.hide().addClass("jquery_rgbmultiselect_options_container").attr("id",optionsId);
+	 return optContainer;
+       } else {
+	 return existingContainer;
+       }
      }
 
      function positionOptionsContainer() {
@@ -915,7 +965,7 @@
        positionIframe(true);
      }
 
-     function updateFieldText() {
+     function updateInputFieldText() {
        $sInput.val("").removeClass("jquery_rgbmultiselect_blurred");
        filterOptions("");
        var vals = buildFieldText();
@@ -1127,11 +1177,11 @@
        var ret=buildFieldText();
        assert("Start typing to search",ret[1],"default field value is 'Start typing to search'");
        $('#picknumbers OPTION').slice(1,3).attr('selected','selected');
-       reparseSelect();
+       reparseSelectList();
        ret=buildFieldText();
        assert("2: Zero, One",ret[1],"new field value is '2: Zero, One'");
        $('#picknumbers OPTION').slice(1,6).attr('selected','selected');
-       reparseSelect();
+       reparseSelectList();
        ret=buildFieldText();
        assert("5: Zero, One, Two + 2 more",ret[1],"new field value is '5: Zero, One, Two + 2 more'");
 
@@ -1176,7 +1226,7 @@
      }
 
      function suitefinished() {
-       var c='black';
+       var c='gray';
        if (testsFailed > 0) c='red';
        $("#testsuiteresults").append('<br>\n<span style="color:'+c+'">'+new Date().toLocaleString()+": "+testsRun+" tests were run, "+testsPassed+" tests passed, "+testsFailed+" tests failed.</span><br>\n");
      }
@@ -1219,6 +1269,7 @@
      fieldTextFormatOnBlurNumToShow: -1,
      fieldTextFormatOnBlurIfLTENumToShow: "%o",
      optionPropertiesField: "rel",
-     tabKeySelectsSingleFilteredUnselectedItem: false
+     tabKeySelectsSingleFilteredUnselectedItem: false,
+     keepSelectedItemsInPlace: false
    };
  })(jQuery);
