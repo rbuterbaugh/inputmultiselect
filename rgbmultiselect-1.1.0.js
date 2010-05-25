@@ -15,6 +15,10 @@
 		 rgbmultiselect: function(prefs) {
 
 		   if (typeof prefs != "undefined") {
+		     if (!jQuery.fn.getSelection) {
+		       prefs.interactiveInputBox=false;
+		     }
+
 		     // if the user has specified a field text format and a threshold
 		     // but hasn't specified an alternate field text format for cases
 		     // when the number of results to show is less than the threshold,
@@ -1385,6 +1389,7 @@
      optionPropertiesField: "rel",
      tabKeySelectsSingleFilteredUnselectedItem: false,
      keepSelectedItemsInPlace: false,
-     selectingHeaderSelectsChildren: false
+     selectingHeaderSelectsChildren: false,
+     interactiveInputBox: false
    };
  })(jQuery);
