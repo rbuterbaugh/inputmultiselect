@@ -170,7 +170,6 @@
 			e.preventDefault();
 			blockSubmit = true;
 			selectCurrentKeyboardChoice();
-		        e.stopPropagation();
 			return false;
 
 		      case KEY.TAB:
@@ -349,7 +348,7 @@
        var selectedOptions=[];
        var unselectedOptions=[];
        for (var o in selectCache) {
-	 if (typeof o == "string" && objTypeNot(o,"default") && !selectCache[o].filtered) {
+	 if (typeof o == "string" && objTypeNot(o,"hidden") && !selectCache[o].filtered) {
 	   if (objTypeIs(o,"sticky")) {
 	     stickyOptions.push({id:o,type:'sticky'});
 	   } else if (prefs.keepSelectedItemsInPlace || !selectCache[o].selected) {
@@ -383,7 +382,7 @@
 	   var cur=$("#"+baseCheckboxId+"_"+type+o);
 	   var optionText=cur.siblings("SPAN");
 	   var parentItem=cur.parent();
-	   if (objTypeNot(o,"default") && (!selectCache[o].selected || prefs.keepSelectedItemsInPlace) &&
+	   if (objTypeNot(o,"hidden") && (!selectCache[o].selected || prefs.keepSelectedItemsInPlace) &&
 	       !parentItem.hasClass("jquery_rgbmultiselect_options_item_is_selected")) {
 	     // if the item has been selected, we don't want to alter its state (show/hide) when filtering.
 	     // if we are keeping selected items in place, we want to filter both selected and unselected
@@ -611,9 +610,21 @@
 	   var stickyValueContainer=$e("div").addClass("jquery_rgbmultiselect_options_item")
 	     .addClass('jquery_rgbmultiselect_options_sticky_item');
 
+	   if (objTypeIs(o,"headernocb")) {
+	     stickyValueContainer.addClass('jquery_rgbmultiselect_options_headernocb');
+	   }
+
+	   if (objTypeIs(o,"child")) {
+	     stickyValueContainer.addClass('jquery_rgbmultiselect_options_child_sticky');
+	   }
+
 	   var stickyCheckbox=$e("input").addClass("jquery_rgbmultiselect_options_sticky_checkbox")
 	     .attr({type:'checkbox',id:baseCheckboxId+'_sticky'+o,name:baseCheckboxId+'_sticky'+o});
-	   stickyCheckbox.click(function() {$sInput.focus();}).mousedown(function(e) {e.stopPropagation();}).appendTo(stickyValueContainer);
+	   stickyCheckbox.click(function() {$sInput.focus();}).appendTo(stickyValueContainer);
+
+	   if (objTypeIs(o,"headernocb")) {
+	     stickyCheckbox.hide();
+	   }
 
 	   var stickyText=$e("span").text(selectCache[o].text);
 	   stickyText.appendTo(stickyValueContainer);
@@ -621,7 +632,6 @@
 	   stickyValueContainer.appendTo(stickyObj);
 
 	   stickyValueContainer.click(function(e) {
-					$sInput.focus();
 					var checkbox=$(this).find(".jquery_rgbmultiselect_options_sticky_checkbox");
 					var value=getItemId(checkbox,"sticky");
 					if (selectCache[value].selected) {
@@ -629,11 +639,12 @@
 					} else {
 					  selectSticky(value);
 					}
-					e.stopPropagation();
-				      })
-	     .mousedown(function(e) {e.stopPropagation();});
+					$sInput.focus();
+				      });
 
-	   attachHoverEvents(stickyValueContainer);
+	   if (objTypeNot(o,"headernocb")) {
+	     attachHoverEvents(stickyValueContainer);
+	   }
 
 	   if (selectCache[o].selected) {
 	     stickyValueContainer.addClass("jquery_rgbmultiselect_options_selected_item");
@@ -651,7 +662,7 @@
 
        var clearTextCheckbox=$e("input").addClass("jquery_rgbmultiselect_options_clearlist_checkbox")
 	 .attr({type:'checkbox',id:baseCheckboxId+'_clearlist',name:baseCheckboxId+'_clearlist'});
-       clearTextCheckbox.click(function() {$sInput.focus();}).mousedown(function(e) {e.stopPropagation();}).appendTo(clearTextContainer);
+       clearTextCheckbox.click(function() {$sInput.focus();}).appendTo(clearTextContainer);
 
        var clearTextText=$e("span").text(prefs.clearAllSelectNoneText).appendTo(clearTextContainer);
 
@@ -660,8 +671,7 @@
        clearText.click(function(e) {
 			 clearTextClick();
 			 $sInput.focus();
-			 e.stopPropagation();
-		       }).mousedown(function(e) {e.stopPropagation();});
+		       });
 
        attachHoverEvents(clearTextContainer);
 
@@ -693,15 +703,21 @@
 	 itemCheckbox.attr("checked","checked");
        }
 
-       itemCheckbox.click(function(e) {$sInput.focus();}).mousedown(function(e) {e.stopPropagation();});
+       itemCheckbox.click(function(e) {$sInput.focus();});
        return itemCheckbox;
      }
 
      function buildNormalCheckboxList(items,type) {
        for (var o in selectCache) {
-	 if (typeof o == "string" && objTypeNot(o,"default") && objTypeNot(o,"sticky")) {
+	 if (typeof o == "string" && objTypeNot(o,"hidden") && objTypeNot(o,"sticky")) {
 	   var item=$e("div").addClass("jquery_rgbmultiselect_options_item")
 	     .addClass('jquery_rgbmultiselect_options_'+type+'_item').attr("id",optionsId+"_item"+o);
+	   if (objTypeIs(o,"headernocb")) {
+	     item.addClass('jquery_rgbmultiselect_options_headernocb');
+	   }
+	   if (objTypeIs(o,"child")) {
+	     item.addClass('jquery_rgbmultiselect_options_child_'+type);
+	   }
 
 	   var displayed=isItemDisplayed(o,type);
 
@@ -719,6 +735,9 @@
 
 	   var itemCheckbox=buildItemCheckBox(type,o);
 	   itemCheckbox.appendTo(item);
+	   if (objTypeIs(o,"headernocb")) {
+	     itemCheckbox.hide();
+	   }
 
 	   var itemText=$e("span").text(selectCache[o].text).appendTo(item);
 
@@ -733,13 +752,11 @@
 			  selectOption(value);
 			}
 			$sInput.focus();
-			e.stopPropagation();
-		      })
-	     .mousedown(function(e) {
-			  e.stopPropagation();
-			});
+		      });
 
-	   attachHoverEvents(item);
+	   if (objTypeNot(o,"headernocb")) {
+	     attachHoverEvents(item);
+	   }
 
 	   item.appendTo(items);
 	 }
@@ -761,6 +778,9 @@
 
      // expect a value in the form "_selectvalue"
      function selectOption(value) {
+       if (objTypeIs(value,"headernocb")) {
+	 return;
+       }
        if (numOptionsSelected() >= prefs.maxSelections && prefs.maxSelections > -1) {
 	 $("#"+baseCheckboxId+"_unselected"+value).removeAttr("checked");
 	 return;
@@ -784,6 +804,9 @@
 
      // expect a value in the form "_selectvalue"
      function unselectOption(value) {
+       if (objTypeIs(value,"headernocb")) {
+	 return;
+       }
        $sSelect.find("OPTION[value='"+value.substr(1)+"']").removeAttr("selected");
        var selectedCheckbox=$("#"+baseCheckboxId+"_selected"+value);
        var unselectedCheckbox=$("#"+baseCheckboxId+"_unselected"+value);
@@ -803,6 +826,9 @@
 
      // expect a value in the form "_selectvalue"
      function selectSticky(value) {
+       if (objTypeIs(value,"headernocb")) {
+	 return;
+       }
        if (numOptionsSelected() >= prefs.maxSelections && prefs.maxSelections > -1) {
 	 $("#"+baseCheckboxId+"_sticky"+value).removeAttr("checked");
 	 return;
@@ -817,6 +843,9 @@
 
      // expect a value in the form "_selectvalue"
      function unselectSticky(value) {
+       if (objTypeIs(value,"headernocb")) {
+	 return;
+       }
        $("#"+baseCheckboxId+"_sticky"+value).removeAttr("checked")
 	 .parent().removeClass("jquery_rgbmultiselect_options_selected_item");
        unselectCommon(value);
@@ -833,6 +862,28 @@
      function selectCommon(value) {
        selectCache[value].selected=true;
        $sSelect.find("OPTION[value='"+value.substr(1)+"']").attr("selected","selected");
+
+       if (objTypeIs(value,"headercb") && prefs.selectingHeaderSelectsChildren && !allChildrenAreSelected(value)) {
+	 var nextItem=selectCache[value].nextItem;
+	 while (nextItem != null && objTypeIs(nextItem,"child")) {
+	   if (objTypeIs(nextItem,"sticky")) {
+	     selectSticky(nextItem);
+	   } else {
+	     selectOption(nextItem);
+	   }
+	   nextItem=selectCache[nextItem].nextItem;
+	 }
+       }
+
+       if (objTypeIs(value,"child") && objTypeIs(selectCache[value].parent,"headercb") &&
+	   prefs.selectingHeaderSelectsChildren && allChildrenAreSelected(selectCache[value].parent)) {
+	   if (objTypeIs(selectCache[value].parent,"sticky")) {
+	     selectSticky(selectCache[value].parent);
+	   } else {
+	     selectOption(selectCache[value].parent);
+	   }
+       }
+
        if (prefs.clearAllSelectNoneAvailable) {
 	 $("#"+baseCheckboxId+"_clearlist").removeAttr("checked");
        }
@@ -844,6 +895,28 @@
      function unselectCommon(value) {
        selectCache[value].selected=false;
        $sSelect.find("OPTION[value='"+value.substr(1)+"']").removeAttr("selected");
+
+       if (objTypeIs(value,"headercb") && prefs.selectingHeaderSelectsChildren && allChildrenAreSelected(value)) {
+	 var nextItem=selectCache[value].nextItem;
+	 while (nextItem != null && objTypeIs(nextItem,"child")) {
+	   if (objTypeIs(nextItem,"sticky")) {
+	     unselectSticky(nextItem);
+	   } else {
+	     unselectOption(nextItem);
+	   }
+	   nextItem=selectCache[nextItem].nextItem;
+	 }
+       }
+
+       if (objTypeIs(value,"child") && objTypeIs(selectCache[value].parent,"headercb") &&
+	   prefs.selectingHeaderSelectsChildren) {
+	   if (objTypeIs(value,"sticky")) {
+	     unselectSticky(selectCache[value].parent);
+	   } else {
+	     unselectOption(selectCache[value].parent);
+	   }
+       }
+
        if (prefs.clearAllSelectNoneAvailable && numOptionsSelected() === 0) {
 	 $("#"+baseCheckboxId+"_clearlist").attr("checked","checked");
        }
@@ -852,10 +925,30 @@
        $sSelect.trigger("change",[selectCache[value]]);
      }
 
+     function allChildrenAreSelected(value) {
+       return allChildrenSelectedUnselected(value,false);
+     }
+
+     function allChildrenAreUnselected(value) {
+       return allChildrenSelectedUnselected(value,true);
+     }
+
+     function allChildrenSelectedUnselected(value,match) {
+       var parent=selectCache[value];
+       var nextItem=selectCache[value].nextItem;
+       while (nextItem != null && objTypeIs(nextItem,"child")) {
+	 if (selectCache[nextItem].selected == match) {
+	   return false;
+	 }
+	 nextItem=selectCache[nextItem].nextItem;
+       }
+       return true;
+     }
+
      function clearAll() {
        for (var o in selectCache) {
 	 if (typeof o == "string") {
-	   if (objTypeNot(o,"default") && selectCache[o].selected) {
+	   if (objTypeNot(o,"hidden") && selectCache[o].selected) {
 	     if (objTypeIs(o,"sticky")) {
 	       unselectSticky(o);
 	     } else {
@@ -869,7 +962,7 @@
      function clearExclusive() {
        for (var o in selectCache) {
 	 if (typeof o == "string") {
-	   if (objTypeNot(o,"default") && objTypeIs(o,"exclusive") && selectCache[o].selected) {
+	   if (objTypeNot(o,"hidden") && objTypeIs(o,"exclusive") && selectCache[o].selected) {
 	     if (objTypeIs(o,"sticky")) {
 	       unselectSticky(o);
 	     } else {
@@ -1054,13 +1147,30 @@
 
      function getSelectOptions() {
        var data={};
+       var curParent=null;
+       var prevValue=null;
        $sSelect.find("OPTION").each(
 	 function() {
 	   var value=$(this).val();
 	   var props=$(this).attr(prefs.optionPropertiesField);
 	   var text=$(this).text();
 	   var selected=$(this).is(":selected");
+
+	   var parent=null;
+	   if (typeof props == "string") {
+	     if (props.indexOf('child') > -1) {
+	       parent=curParent;
+	     } else if (props.indexOf('headercb') > -1 || props.indexOf('headernocb') > -1) {
+	       curParent="_"+value;
+	     } else {
+	       curParent=null;
+	     }
+	   }
+
 	   data["_"+value]={
+	     nextItem:null,
+	     prevItem:prevValue,
+	     parent:parent,
 	     props:props,
 	     text:text,
 	     selected:selected,
@@ -1068,8 +1178,15 @@
 	     obj:$(this), // for the benefit of the callback
 	     val:value // for the benefit of the callback
 	   };
+
+	   if (prevValue !== null) {
+	     data[prevValue].nextItem="_"+value;
+	   }
+
+	   prevValue="_"+value;
 	 }
        );
+
        return data;
      }
 
@@ -1167,8 +1284,8 @@
        // test convenience functions
        assertFalse(between(1,2,3),"1 is not between 2 and 3");
        assertTrue(between(2,1,3),"2 is between 1 and 3");
-       assertTrue(mouseOverObj($('#picknumbers_rgbmultiselect'),{pageX:15,pageY:15}),"mouse is over input box");
-       assertFalse(mouseOverObj($('#picknumbers_rgbmultiselect'),{pageX:150,pageY:150}),"mouse is not over input box");
+       assertTrue(mouseOverObj($('#picknumbers'),{pageX:15,pageY:15}),"mouse is over input box");
+       assertFalse(mouseOverObj($('#picknumbers'),{pageX:150,pageY:150}),"mouse is not over input box");
 
        // test field population method and reparse callback
        var ret=buildFieldText();
@@ -1267,6 +1384,7 @@
      fieldTextFormatOnBlurIfLTENumToShow: "%o",
      optionPropertiesField: "rel",
      tabKeySelectsSingleFilteredUnselectedItem: false,
-     keepSelectedItemsInPlace: false
+     keepSelectedItemsInPlace: false,
+     selectingHeaderSelectsChildren: false
    };
  })(jQuery);

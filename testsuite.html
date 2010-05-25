@@ -9,7 +9,7 @@
 </head>
 <body style="background-color:black">
   <select id="picknumbers" name="picknumbers[]" size="5" style="width:250px" multiple>
-    <option rel="default" value="">Select a few...</option>
+    <option rel="hidden" value="">Select a few...</option>
     <option value="0" rel="sticky">Zero</option>
     <option value="1">One</option>
     <option value="2">Two</option>
@@ -21,6 +21,25 @@
     <option value="8">Eight</option>
     <option value="9">Nine</option>
     <option value="10" rel="exclusive">Ten</option>
+  </select>
+  <select id="picknumbers2" name="picknumbers2[]" size="5" style="width:250px" multiple>
+    <option rel="hidden" value="">Select a few...</option>
+    <option value="a" rel="headercb sticky">Letter Header</option>
+    <option value="b" rel="child sticky">Letter Child b</option>
+    <option value="c" rel="child sticky">Letter Child c</option>
+    <option value="ltf" rel="headernocb">Less than Five (nocb)</option>
+    <option value="0" rel="child">Zero</option>
+    <option value="1" rel="child">One</option>
+    <option value="2" rel="child">Two</option>
+    <option value="3" rel="child">Three</option>
+    <option value="4" rel="child">Four</option>
+    <option value="5">Five</option>
+    <option value="gtf" rel="headercb">Greater than Five (cb)</option>
+    <option value="6" rel="child">Six</option>
+    <option value="7" rel="child">Seven</option>
+    <option value="8" rel="child">Eight</option>
+    <option value="9" rel="child">Nine</option>
+    <option value="10" rel="child">Ten</option>
   </select>
 <div id="testsuiteresults" style="border:1px solid white;padding:10px;width:700px;margin-top:10px">
 </div>

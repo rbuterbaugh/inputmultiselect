@@ -1,8 +1,3 @@
-add rel="subheader" type
- - option to show subheaders when filtering
- - option to place checkboxes in front of subheaders that will auto-check
-   all child options... should be able to enable/disable per subheader
-
 input box interaction
  - add current selections to input field upon selection
  - allow removal of items using input box

@@ -54,9 +54,22 @@
   cursor: pointer;
   }
 
+DIV.jquery_rgbmultiselect_options_headernocb,
+DIV.jquery_rgbmultiselect_options_headernocb SPAN
+{
+  cursor: auto;
+  }
+
 .jquery_rgbmultiselect_options_item INPUT
 { 
   vertical-align: middle;
+}
+
+.jquery_rgbmultiselect_options_child_sticky INPUT,
+.jquery_rgbmultiselect_options_child_unselected INPUT,
+.jquery_rgbmultiselect_options_child_selected INPUT
+{ 
+  margin-left: 10px;
 }
 
 .jquery_rgbmultiselect_options_item SPAN .jquery_rgbmultiselect_options_text_filtermatch

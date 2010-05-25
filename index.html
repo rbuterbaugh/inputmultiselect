@@ -57,7 +57,7 @@
   <div style="margin: 15px 0">
     <label style="font-weight:bold" for="picknumbers">Pick some numbers</label><br>
     <select id="picknumbers" name="picknumbers[]" size="5" style="width:250px" multiple>
-      <option rel="default" value="">Select a few...</option>
+      <option rel="hidden" value="">Select a few...</option>
       <option value="0">Zero</option>
       <option value="1">One</option>
       <option value="2">Two</option>
@@ -81,7 +81,7 @@
   <div style="margin: 15px 0">
     <label style="font-weight:bold" for="pick3numbers">Pick up to 3 numbers</label> (note that "Zero" is flagged as sticky and stays at the top)<br>
     <select id="pick3numbers" name="pick3numbers[]" size="5" style="width:250px" multiple>
-      <option rel="default" value="">Select a few...</option>
+      <option rel="hidden" value="">Select a few...</option>
       <option rel="sticky" value="0">Zero</option>
       <option value="1">One</option>
       <option value="2">Two</option>
@@ -120,7 +120,7 @@
   </select>
   <br/>...into this:<br/>
   <select id="picknumbersrgb" name="picknumbersrgb[]" size="5" style="width:250px" multiple="multiple">
-    <option rel="default" value="">Select a few...</option>
+    <option rel="hidden" value="">Select a few...</option>
     <option value="0">Zero</option>
     <option value="1">One</option>
     <option value="2">Two</option>
@@ -173,7 +173,7 @@
 
     rgbmultiselect builds its option list off of an existing SELECT list; options will be listed in the order in which they appear in the SELECT list. You can set the following flags in the "rel" attribute of each &lt;OPTION&gt; to alter the way options are displayed. Note that you can set more than one option, separated by spaces (&lt;OPTION value="1" rel="sticky exclusive"&gt;One&lt;/OPTION&gt;):
     <ul>
-      <li><strong>default</strong>: this is a default option and should be omitted from the list altogether.</li>
+      <li><strong>hidden</strong>: this is a hidden option and should be omitted from the rgbmultiselect list altogether.</li>
       <li><strong>sticky</strong>: this option should always appear at the top of the list (immediately below the Clear All / Select None option, if available; see below) and should not move if unselected.</li>
       <li><strong>exclusive</strong>: if this option is selected, all other options will be unselected. Additionally, if an exclusive option is already selected and another option is then selected, the exclusive option will be unselected.</li>
     </ul>
