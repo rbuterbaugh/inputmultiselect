@@ -1385,6 +1385,6 @@
      optionPropertiesField: "rel",
      tabKeySelectsSingleFilteredUnselectedItem: false,
      keepSelectedItemsInPlace: false,
-     selectingHeaderSelectsChildren: falsex
+     selectingHeaderSelectsChildren: false
    };
  })(jQuery);
