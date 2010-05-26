@@ -1308,20 +1308,63 @@
        assertTrue(objTypeNot("_1","sticky"),"option 1 is not sticky (objTypeNot)");
        
        // test input field
-       assert($("#picknumbers_rgbmultiselect").size(),1,"input field exists");
-       assert($("#picknumbers_rgbmultiselect").attr("autocomplete"),"off","input field has autocomplete turned off");
+       assert(1,$("#picknumbers_rgbmultiselect").size(),"input field exists");
+       assert("off",$("#picknumbers_rgbmultiselect").attr("autocomplete"),"input field has autocomplete turned off");
 
        // test that option array is populated correctly
        var tmpCache=getSelectOptions();
        assertFalse(tmpCache["_0"].filtered,"0 is not filtered");
        assertTrue(tmpCache["_0"].selected,"0 is selected");
-       assert(tmpCache["_0"].props,"sticky","0 has sticky as a property");
+       assert("sticky",tmpCache["_0"].props,"0 has sticky as a property");
+       assert(null,tmpCache["_selectafew"].prevItem,"first element has no previous element");
+       assert("_0",tmpCache["_selectafew"].nextItem,"first element has _0 as next element");
+       assert("_selectafew",tmpCache["_0"].prevItem,"second element has _selectafew as previous element");
+       assert("_1",tmpCache["_0"].nextItem,"second element has _1 as next element");
+       assert("_9",tmpCache["_10"].prevItem,"last element has _9 as previous element");
+       assert(null,tmpCache["_10"].nextItem,"last element has no as next element");
+       assert("_fivesixseven",tmpCache["_5"].parent,"_5 has fivesixseven as a parent");
+       assert(null,tmpCache["_4"].parent,"_4 has no parent");
 
-       // test selectCache accessors
-       assert(numOptionsSelected(),5,"5 options are selected");
-       assertTrue(anyNonstickyOptionsSelected(),"nonsticky options are selected");
+       // test selectCache and other accessors
+       assert(5,numOptionsSelected(),"5 options are selected");
        assertTrue(anyOptionsSticky(),"at least one option is sticky");
-       
+       assertTrue(anyNonstickyOptionsSelected(),"nonsticky options are selected");
+       assert("_0",getItemId($("#picknumbers_rgbmultiselect_container_checkbox_sticky_0"),"sticky"),"_0 is the item id");
+       assert("_1",getItemId($("#picknumbers_rgbmultiselect_container_checkbox_unselected_1"),"unselected"),"_1 is the item id");
+       assertTrue(isItemDisplayed("_0","sticky"),"_0 is displayed when keepSelectedItemsInPlace is on");
+       assertTrue(isItemDisplayed("_8","unselected"),"_8 is displayed when keepSelectedItemsInPlace is on");
+       assert("Select options",getHelpText(0),"help text is Select options");
+
+       // test children selected functions
+       assertFalse(allChildrenAreSelected("_fivesixseven"),"all children of _fivesixseven are not selected");
+       assertTrue(allChildrenAreUnselected("_fivesixseven"),"all children of _fivesixseven are unselected");
+       selectOption("_fivesixseven");
+       assertTrue(allChildrenAreSelected("_fivesixseven"),"all children of _fivesixseven are now selected");
+       assertFalse(allChildrenAreUnselected("_fivesixseven"),"all children of _fivesixseven are now not unselected");
+       unselectOption("_5");
+       assertFalse(allChildrenAreSelected("_fivesixseven"),"all children of _fivesixseven are now not selected");
+       assertFalse(allChildrenAreUnselected("_fivesixseven"),"all children of _fivesixseven are now not unselected");
+       unselectOption("_6");
+       unselectOption("_7");
+       reparseSelectList();
+
+       // test keyboard search functions
+       assert("abc",replaceWord("abc","d"),"test replace without match");
+       assert('a<span class="jquery_rgbmultiselect_options_text_filtermatch">b</span>c',replaceWord("abc","b"),"test replace with one match");
+       assert('a<span class="jquery_rgbmultiselect_options_text_filtermatch">b</span>a<span class="jquery_rgbmultiselect_options_text_filtermatch">b</span>c',replaceWord("ababc","b"),"test replace with two matches");
+       assert('a<span class="jquery_rgbmultiselect_options_text_filtermatch">match</span>c',replaceWord("amatchc","match"),"test replace with complicated match");
+
+       assert('a<span class="jquery_rgbmultiselect_options_text_filtermatch">b</span>a<span class="jquery_rgbmultiselect_options_text_filtermatch">d</span>c',replaceAll("abadc",["b","d"]),"test replace with two matches");
+
+       assertTrue(andMatch("woot",["woot"]),"single term successful 'and' match");
+       assertTrue(andMatch("woot ness hoo ray",["ness","ray"]),"successful 'and' match");
+       assertFalse(andMatch("woot ness hoo ray",["ness","ray","ski"]),"failed 'and' match");
+
+       var visibleOptions=getAllVisibleOptions();
+       assert(12,visibleOptions.length,"visible options length is 12");
+       assert("_1",firstUnselected(visibleOptions),"first unselected is _1");
+       assert("_10",lastUnselected(visibleOptions),"last unselected is _10");
+
        // print report
        suitefinished();
      }
@@ -1335,14 +1378,17 @@
        } else {
 	 testsFailed++;
 	 c="red";
+	 $("#testsuiteresults").append('<span style="color:'+c+'">'+new Date().toLocaleString()+": "+message+"</span><br/>");
        }
-       $("#testsuiteresults").append('<span style="color:'+c+'">'+new Date().toLocaleString()+": "+message+"</span><br>\n");
      }
 
      function suitefinished() {
        var c='gray';
-       if (testsFailed > 0) c='red';
-       $("#testsuiteresults").append('<br>\n<span style="color:'+c+'">'+new Date().toLocaleString()+": "+testsRun+" tests were run, "+testsPassed+" tests passed, "+testsFailed+" tests failed.</span><br>\n");
+       if (testsFailed > 0) {
+	 c='red';
+	 $("#testsuiteresults").append('<br/>');
+       }
+       $("#testsuiteresults").append('<span style="color:'+c+'">'+new Date().toLocaleString()+": "+testsRun+" tests were run, "+testsPassed+" tests passed, "+testsFailed+" tests failed.</span>");
      }
 
      function assert(expected,actual,message) {
