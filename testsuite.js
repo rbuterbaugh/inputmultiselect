@@ -6,5 +6,15 @@ $(document).ready(function() {
 						       fieldTextFormatOnBlurIfLTENumToShow: "%c: %o",
 						       keepSelectedItemsInPlace: true,
 						       selectingHeaderSelectsChildren: true
-						     });
+						     }).rgbms_change(
+						       function(event,data) {
+							 console.log("change");
+							 console.log(data);
+						       }).rgbms_enter(
+						       function() {
+							 console.log("enter");
+						       }).rgbms_leave(
+							 function() {
+							   console.log("leave");
+							 });
 		  });

@@ -50,6 +50,12 @@
 		 },
 		 rgbms_change: function(handler) {
 		   return this.bind("rgbms_change",handler);
+		 },
+		 rgbms_enter: function(handler) {
+		   return this.bind("rgbms_enter",handler);
+		 },
+		 rgbms_leave: function(handler) {
+		   return this.bind("rgbms_leave",handler);
 		 }
 	       });
 
@@ -77,6 +83,7 @@
      var leaveFieldTimeout=null;
      var blockSubmit=false;
      var hasFocus=0;
+     var widgetIsActive=false;
      var keypressTimeout=null;
      var optionsNumMatching=0,optionsOneSelectedMatch=null,optionsOneSelectedMatchType="";
      var optionsKeyboardCurrentId=null,optionsKeyboardCurrentType=null;
@@ -124,6 +131,10 @@
 
      $sInput.focus(
        function() {
+	 if (!widgetIsActive) {
+	   $sSelect.trigger("rgbms_enter");
+	   widgetIsActive=true;
+	 }
 	 hasFocus++;
 	 if (leaveFieldTimeout) {
 	   clearTimeout(leaveFieldTimeout);
@@ -1028,6 +1039,8 @@
        clearInputField=true;
        resetAndUpdateKeySelection();
        updateInputFieldText();
+       widgetIsActive=false;
+       $sSelect.trigger("rgbms_leave");
      }
 
      function buildOuterOptionsContainer() {
