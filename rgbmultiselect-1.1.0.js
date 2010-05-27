@@ -45,11 +45,11 @@
 				      new $.rgbmultiselector(this, myPrefs);
 				    });
 		 },
-		 reparse: function() {
-		   return this.trigger("reparse");
+		 rgbms_reparse: function() {
+		   return this.trigger("rgbms_reparse");
 		 },
-		 change: function(handler) {
-		   return this.bind("change",handler);
+		 rgbms_change: function(handler) {
+		   return this.bind("rgbms_change",handler);
 		 }
 	       });
 
@@ -100,7 +100,7 @@
      var selectCache=getSelectOptions();
      updateInputFieldText();
 
-     $sSelect.bind("reparse",function() {
+     $sSelect.bind("rgbms_reparse",function() {
 		     reparseSelectList();
 		   });
 
@@ -889,7 +889,7 @@
        }
        positionOptionsContainer();
        $sOptions.children(".jquery_rgbmultiselect_options_helptext").text(getHelpText(numOptionsSelected()));
-       $sSelect.trigger("change",[selectCache[value]]);
+       $sSelect.trigger("rgbms_change",[selectCache[value]]);
      }
 
      function unselectCommon(value) {
@@ -922,7 +922,7 @@
        }
        positionOptionsContainer();
        $sOptions.children(".jquery_rgbmultiselect_options_helptext").text(getHelpText(numOptionsSelected()));
-       $sSelect.trigger("change",[selectCache[value]]);
+       $sSelect.trigger("rgbms_change",[selectCache[value]]);
      }
 
      function allChildrenAreSelected(value) {
