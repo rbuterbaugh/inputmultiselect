@@ -51,8 +51,8 @@
 		 rgbms_change: function(handler) {
 		   return this.bind("rgbms_change",handler);
 		 },
-		 rgbms_toggle: function(value) {
-		   return this.trigger("rgbms_toggle",value);
+		 rgbms_toggle: function(value,cascade) {
+		   return this.trigger("rgbms_toggle",[value,cascade]);
 		 },
 		 rgbms_enter: function(handler) {
 		   return this.bind("rgbms_enter",handler);
@@ -117,9 +117,9 @@
        .bind("rgbms_reparse",function() {
 	       reparseSelectList();
 	     })
-       .bind("rgbms_toggle",function(event,value) {
+       .bind("rgbms_toggle",function(event,value,cascade) {
 	       if (typeof selectCache["_"+value] != "undefined") {
-		 triggerSelectUnselectAction("_"+value);
+		 triggerSelectUnselectAction("_"+value,null,cascade);
 	       }
 	     });
 
@@ -508,7 +508,7 @@
        restoreOptionText(optionText,itemId);
        selectCache[itemId].filtered=false;
 
-       triggerSelectUnselectAction(itemId,optionsOneSelectedMatchType);
+       triggerSelectUnselectAction(itemId,optionsOneSelectedMatchType,true);
 
        $sInput.focus().val("");
        filterOptions("");
@@ -546,7 +546,7 @@
 	     }
 	   }
 
-	   triggerSelectUnselectAction(toBeSelectedId,toBeSelectedType);
+	   triggerSelectUnselectAction(toBeSelectedId,toBeSelectedType,true);
 
 	   // trigger another unselectedOptionsResize
 	   $sInput.focus();
@@ -554,8 +554,12 @@
        }
      }
 
-     function triggerSelectUnselectAction(id,type) {
-       if (typeof type == "undefined" || typeof type == "null" || type == null) {
+     function triggerSelectUnselectAction(id,type,cascade) {
+       if (typeof cascade == "undefined" || cascade == null) {
+	 cascade=true;
+       }
+
+       if (typeof type == "undefined" || type == null) {
 	 if (objTypeIs(id,"sticky")) {
 	   type="sticky";
 	 } else {
@@ -564,6 +568,7 @@
 	   // trigger the general (un)select action
 	 }
        }
+
        if (type == "clearlist") {
 	 clearTextClick();
        } else if (type == "sticky") {
@@ -574,9 +579,9 @@
 	 }
        } else {
 	 if (selectCache[id].selected) {
-	   unselectOption(id);
+	   unselectOption(id,cascade);
 	 } else {
-	   selectOption(id);
+	   selectOption(id,cascade);
 	 }
        }
      }
@@ -779,9 +784,9 @@
 			// this works regardless of the state of keepSelectedItemsInPlace
 			// since we're checking the cache instead of the object type
 			if (selectCache[value].selected) {
-			  unselectOption(value);
+			  unselectOption(value,true);
 			} else {
-			  selectOption(value);
+			  selectOption(value,true);
 			}
 			$sInput.focus();
 		      });
@@ -809,7 +814,7 @@
      }
 
      // expect a value in the form "_selectvalue"
-     function selectOption(value) {
+     function selectOption(value,cascade) {
        if (objTypeIs(value,"headernocb")) {
 	 return;
        }
@@ -830,12 +835,12 @@
 	 unselectedCheckbox.parent().addClass("jquery_rgbmultiselect_options_item_is_selected").hide();
        }
 
-       selectCommon(value);
+       selectCommon(value,cascade);
        updateUnselectedHeight();
      }
 
      // expect a value in the form "_selectvalue"
-     function unselectOption(value) {
+     function unselectOption(value,cascade) {
        if (objTypeIs(value,"headernocb")) {
 	 return;
        }
@@ -852,7 +857,7 @@
 	 unselectedCheckbox.parent().removeClass("jquery_rgbmultiselect_options_item_is_selected").show();
        }
 
-       unselectCommon(value);
+       unselectCommon(value,cascade);
        updateUnselectedHeight();
      }
 
@@ -891,29 +896,31 @@
        }
      }
 
-     function selectCommon(value) {
+     function selectCommon(value,cascade) {
        selectCache[value].selected=true;
        $sSelect.find("OPTION[value='"+value.substr(1)+"']").attr("selected","selected");
 
-       if (objTypeIs(value,"headercb") && prefs.selectingHeaderSelectsChildren && !allChildrenAreSelected(value)) {
-	 var nextItem=selectCache[value].nextItem;
-	 while (nextItem != null && objTypeIs(nextItem,"child")) {
-	   if (objTypeIs(nextItem,"sticky")) {
-	     selectSticky(nextItem);
-	   } else {
-	     selectOption(nextItem);
+       if (cascade) {
+	 if (objTypeIs(value,"headercb") && prefs.selectingHeaderSelectsChildren && !allChildrenAreSelected(value)) {
+	   var nextItem=selectCache[value].nextItem;
+	   while (nextItem != null && objTypeIs(nextItem,"child")) {
+	     if (objTypeIs(nextItem,"sticky")) {
+	       selectSticky(nextItem);
+	     } else {
+	       selectOption(nextItem,false);
+	     }
+	     nextItem=selectCache[nextItem].nextItem;
 	   }
-	   nextItem=selectCache[nextItem].nextItem;
 	 }
-       }
 
-       if (objTypeIs(value,"child") && objTypeIs(selectCache[value].parent,"headercb") &&
-	   prefs.selectingHeaderSelectsChildren && allChildrenAreSelected(selectCache[value].parent)) {
+	 if (objTypeIs(value,"child") && objTypeIs(selectCache[value].parent,"headercb") &&
+	     prefs.selectingHeaderSelectsChildren && allChildrenAreSelected(selectCache[value].parent)) {
 	   if (objTypeIs(selectCache[value].parent,"sticky")) {
 	     selectSticky(selectCache[value].parent);
 	   } else {
-	     selectOption(selectCache[value].parent);
+	     selectOption(selectCache[value].parent,false);
 	   }
+	 }
        }
 
        if (prefs.clearAllSelectNoneAvailable) {
@@ -924,29 +931,31 @@
        $sSelect.trigger("rgbms_change",[selectCache[value]]);
      }
 
-     function unselectCommon(value) {
+     function unselectCommon(value,cascade) {
        selectCache[value].selected=false;
        $sSelect.find("OPTION[value='"+value.substr(1)+"']").removeAttr("selected");
 
-       if (objTypeIs(value,"headercb") && prefs.selectingHeaderSelectsChildren && allChildrenAreSelected(value)) {
-	 var nextItem=selectCache[value].nextItem;
-	 while (nextItem != null && objTypeIs(nextItem,"child")) {
-	   if (objTypeIs(nextItem,"sticky")) {
-	     unselectSticky(nextItem);
-	   } else {
-	     unselectOption(nextItem);
+       if (cascade) {
+	 if (objTypeIs(value,"headercb") && prefs.selectingHeaderSelectsChildren && allChildrenAreSelected(value)) {
+	   var nextItem=selectCache[value].nextItem;
+	   while (nextItem != null && objTypeIs(nextItem,"child")) {
+	     if (objTypeIs(nextItem,"sticky")) {
+	       unselectSticky(nextItem);
+	     } else {
+	       unselectOption(nextItem,false);
+	     }
+	     nextItem=selectCache[nextItem].nextItem;
 	   }
-	   nextItem=selectCache[nextItem].nextItem;
 	 }
-       }
 
-       if (objTypeIs(value,"child") && objTypeIs(selectCache[value].parent,"headercb") &&
-	   prefs.selectingHeaderSelectsChildren) {
+	 if (objTypeIs(value,"child") && objTypeIs(selectCache[value].parent,"headercb") &&
+	     prefs.selectingHeaderSelectsChildren) {
 	   if (objTypeIs(value,"sticky")) {
 	     unselectSticky(selectCache[value].parent);
 	   } else {
-	     unselectOption(selectCache[value].parent);
+	     unselectOption(selectCache[value].parent,false);
 	   }
+	 }
        }
 
        if (prefs.clearAllSelectNoneAvailable && numOptionsSelected() === 0) {
@@ -984,7 +993,7 @@
 	     if (objTypeIs(o,"sticky")) {
 	       unselectSticky(o);
 	     } else {
-	       unselectOption(o);
+	       unselectOption(o,true);
 	     }
 	   }
 	 }
@@ -998,7 +1007,7 @@
 	     if (objTypeIs(o,"sticky")) {
 	       unselectSticky(o);
 	     } else {
-	       unselectOption(o);
+	       unselectOption(o,true);
 	     }
 	   }
 	 }
@@ -1373,14 +1382,14 @@
        // test children selected functions
        assertFalse(allChildrenAreSelected("_fivesixseven"),"all children of _fivesixseven are not selected");
        assertTrue(allChildrenAreUnselected("_fivesixseven"),"all children of _fivesixseven are unselected");
-       selectOption("_fivesixseven");
+       selectOption("_fivesixseven",true);
        assertTrue(allChildrenAreSelected("_fivesixseven"),"all children of _fivesixseven are now selected");
        assertFalse(allChildrenAreUnselected("_fivesixseven"),"all children of _fivesixseven are now not unselected");
-       unselectOption("_5");
+       unselectOption("_5",true);
        assertFalse(allChildrenAreSelected("_fivesixseven"),"all children of _fivesixseven are now not selected");
        assertFalse(allChildrenAreUnselected("_fivesixseven"),"all children of _fivesixseven are now not unselected");
-       unselectOption("_6");
-       unselectOption("_7");
+       unselectOption("_6",true);
+       unselectOption("_7",true);
        reparseSelectList();
 
        // test keyboard search functions

@@ -16,10 +16,9 @@ $(document).ready(
 	})
       .rgbms_preleave(
 	function() {
-	  // here we can't just say rgbms_toggle("fivesixseven") because we don't want
-	  // to recursively deselect the group. just deselect the parent and reparse
-	  $("#picknumbers2 OPTION[value=fivesixseven]").removeAttr("selected");
-	  $("#picknumbers2").rgbms_reparse();
+	  if ($("#picknumbers2 OPTION[value=fivesixseven]").attr("selected")) {
+	    $("#picknumbers2").rgbms_toggle("fivesixseven",false);
+	  }
 	});
 
     $('#picknumbers')
