@@ -1133,7 +1133,7 @@
        // easier than conditionally including the comma in the loop
        replacementsO=replacementsO.substr(0,replacementsO.length-2);
 
-       if (prefs.fieldTextFormatOnBlurNumToShow > 0) {
+       if (prefs.fieldTextFormatOnBlurNumToShow > -1) {
 	 replacementsA=replacementsC-prefs.fieldTextFormatOnBlurNumToShow;
        }
 
@@ -1147,7 +1147,7 @@
 	 }
        } else {
 	 var fieldText=prefs.fieldTextFormatOnBlur+"";
-	 if (replacementsA <= 0) {
+	 if (prefs.fieldTextFormatOnBlurNumToShow > -1 && replacementsA <= 0) {
 	   fieldText=prefs.fieldTextFormatOnBlurIfLTENumToShow+"";
 	 }
 	 fieldText=fieldText.replace(/%o/,replacementsO);
