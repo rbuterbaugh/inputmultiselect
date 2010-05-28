@@ -1,7 +1,0 @@
-input box interaction
- - add current selections to input field upon selection
- - allow removal of items using input box
-  - if user clicks on an item, it should be automatically selected
-  - we will need to tightly manage how the input box interaction works,
-    probably by constantly re-populating it and managing primarily via
-    a backing object

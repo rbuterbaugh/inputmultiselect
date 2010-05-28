@@ -51,11 +51,17 @@
 		 rgbms_change: function(handler) {
 		   return this.bind("rgbms_change",handler);
 		 },
+		 rgbms_toggle: function(value) {
+		   return this.trigger("rgbms_toggle",value);
+		 },
 		 rgbms_enter: function(handler) {
 		   return this.bind("rgbms_enter",handler);
 		 },
-		 rgbms_leave: function(handler) {
-		   return this.bind("rgbms_leave",handler);
+		 rgbms_preleave: function(handler) {
+		   return this.bind("rgbms_preleave",handler);
+		 },
+		 rgbms_postleave: function(handler) {
+		   return this.bind("rgbms_postleave",handler);
 		 }
 	       });
 
@@ -107,9 +113,15 @@
      var selectCache=getSelectOptions();
      updateInputFieldText();
 
-     $sSelect.bind("rgbms_reparse",function() {
-		     reparseSelectList();
-		   });
+     $sSelect
+       .bind("rgbms_reparse",function() {
+	       reparseSelectList();
+	     })
+       .bind("rgbms_toggle",function(event,value) {
+	       if (typeof selectCache["_"+value] != "undefined") {
+		 triggerSelectUnselectAction("_"+value);
+	       }
+	     });
 
      if (prefs.buildOptionsInBackground) {
        $(document).ready(function() { setTimeout(function() { buildOptions(); },10); });
@@ -496,7 +508,7 @@
        restoreOptionText(optionText,itemId);
        selectCache[itemId].filtered=false;
 
-       triggerSelectUnselectAction(optionsOneSelectedMatchType,itemId);
+       triggerSelectUnselectAction(itemId,optionsOneSelectedMatchType);
 
        $sInput.focus().val("");
        filterOptions("");
@@ -534,7 +546,7 @@
 	     }
 	   }
 
-	   triggerSelectUnselectAction(toBeSelectedType,toBeSelectedId);
+	   triggerSelectUnselectAction(toBeSelectedId,toBeSelectedType);
 
 	   // trigger another unselectedOptionsResize
 	   $sInput.focus();
@@ -542,7 +554,16 @@
        }
      }
 
-     function triggerSelectUnselectAction(type,id) {
+     function triggerSelectUnselectAction(id,type) {
+       if (typeof type == "undefined" || typeof type == "null" || type == null) {
+	 if (objTypeIs(id,"sticky")) {
+	   type="sticky";
+	 } else {
+	   type="unselected";
+	   // or "selected", doesn't really matter. just want to
+	   // trigger the general (un)select action
+	 }
+       }
        if (type == "clearlist") {
 	 clearTextClick();
        } else if (type == "sticky") {
@@ -1035,12 +1056,13 @@
      }
 
      function leaveField() {
+       $sSelect.trigger("rgbms_preleave");
        hideOptions();
        clearInputField=true;
        resetAndUpdateKeySelection();
        updateInputFieldText();
        widgetIsActive=false;
-       $sSelect.trigger("rgbms_leave");
+       $sSelect.trigger("rgbms_postleave");
      }
 
      function buildOuterOptionsContainer() {
