@@ -33,16 +33,22 @@ $(document).ready(
 	})
       .rgbms_change(
 	function(event,data) {
-	  console.log("change");
-	  console.log(data);
+	  if (typeof console != "undefined") {
+	    console.log("change");
+	    console.log(data);
+	  }
 	})
       .rgbms_enter(
 	function() {
-	  console.log("enter");
+	  if (typeof console != "undefined") {
+	    console.log("enter");
+	  }
 	})
       .rgbms_postleave(
 	function() {
-	  console.log("leave");
+	  if (typeof console != "undefined") {
+	    console.log("leave");
+	  }
 	}
       );
   }
