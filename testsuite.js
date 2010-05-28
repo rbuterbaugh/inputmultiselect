@@ -4,6 +4,9 @@ $(document).ready(
     $('#picknumbers2')
       .rgbmultiselect(
 	{
+	  clearAllSelectNoneAvailable: true,
+	  clearAllSelectNoneText: 'No Preference',
+	  clearAllSelectNoneTextShowOnBlur: true,
 	  keepSelectedItemsInPlace: true,
 	  selectingHeaderSelectsChildren: true
 	})

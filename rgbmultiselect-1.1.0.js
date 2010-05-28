@@ -611,7 +611,8 @@
 	 var clearText=buildClearTextItem();
 	 clearText.appendTo($sOptions);
 	 if (numOptSel === 0) {
-	   clearText.find(".jquery_rgbmultiselect_options_clearlist_checkbox").attr("checked","checked");
+	   clearText.find(".jquery_rgbmultiselect_options_clearlist_checkbox").attr("checked","checked")
+	     .parent().addClass("jquery_rgbmultiselect_options_cleartext_selected");
 	 }
        }
 
@@ -718,7 +719,7 @@
      function clearTextClick() {
        clearAll();
        updateUnselectedHeight();
-       $("#"+baseCheckboxId+"_clearlist").attr("checked","checked");
+       $("#"+baseCheckboxId+"_clearlist").attr("checked","checked").parent().addClass("jquery_rgbmultiselect_options_cleartext_selected");
      }
 
      function isItemDisplayed(o,type) {
@@ -924,7 +925,7 @@
        }
 
        if (prefs.clearAllSelectNoneAvailable) {
-	 $("#"+baseCheckboxId+"_clearlist").removeAttr("checked");
+	 $("#"+baseCheckboxId+"_clearlist").removeAttr("checked").parent().removeClass("jquery_rgbmultiselect_options_cleartext_selected");
        }
        positionOptionsContainer();
        $sOptions.children(".jquery_rgbmultiselect_options_helptext").text(getHelpText(numOptionsSelected()));
@@ -959,7 +960,7 @@
        }
 
        if (prefs.clearAllSelectNoneAvailable && numOptionsSelected() === 0) {
-	 $("#"+baseCheckboxId+"_clearlist").attr("checked","checked");
+	 $("#"+baseCheckboxId+"_clearlist").attr("checked","checked").parent().addClass("jquery_rgbmultiselect_options_cleartext_selected");
        }
        positionOptionsContainer();
        $sOptions.children(".jquery_rgbmultiselect_options_helptext").text(getHelpText(numOptionsSelected()));
