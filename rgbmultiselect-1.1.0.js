@@ -48,6 +48,9 @@
 		 rgbms_reparse: function() {
 		   return this.trigger("rgbms_reparse");
 		 },
+		 rgbms_close: function() {
+		   return this.trigger("rgbms_close");
+		 },
 		 rgbms_change: function(handler) {
 		   return this.bind("rgbms_change",handler);
 		 },
@@ -116,6 +119,9 @@
      $sSelect
        .bind("rgbms_reparse",function() {
 	       reparseSelectList();
+	     })
+       .bind("rgbms_close",function() {
+	       leaveField();
 	     })
        .bind("rgbms_toggle",function(event,value,cascade) {
 	       if (typeof selectCache["_"+value] != "undefined") {
