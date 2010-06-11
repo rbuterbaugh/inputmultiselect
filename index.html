@@ -3,7 +3,7 @@
 <head>
 <title>rgbmultiselect - a jQuery plugin for choosing multiple options from SELECT lists</title>
 <script type="text/javascript" src="jquery-1.3.2.js"></script>
-<script type="text/javascript" src="rgbmultiselect-1.0.5.js"></script>
+<script type="text/javascript" src="rgbmultiselect-1.1.0.js"></script>
 <script type="text/javascript" src="index.js"></script>
 <link rel="stylesheet" type="text/css" href="rgbmultiselect.css"/>
 <link rel="stylesheet" type="text/css" href="index.css"/>
@@ -38,10 +38,12 @@
   <ul>
     <li>widget fits in the space of a single text input field</li>
     <li>supports sticky and exclusive options</li>
+    <li>supports subheader designations</li>
+    <li>comprehensive callback support</li>
     <li>can set a maximum limit on the number of options selected</li>
     <li>all selections stored using the backing SELECT box for maximum compatibility and degradability</li>
     <li>cross-browser: IE 6+, Firefox 2+, Safari 3+, Opera 9+, Chrome 1+</li>
-    <li>small size (24K minified, 14K packed)</li>
+    <li><span style="text-decoration:line-through">small</span> reasonable size (31K minified, 16K packed)</li>
   </ul>
 
   <br/><br/>
@@ -171,13 +173,19 @@
   <div>
     <h3>Select list setup:</h3>
 
-    rgbmultiselect builds its option list off of an existing SELECT list; options will be listed in the order in which they appear in the SELECT list. You can set the following flags in the "rel" attribute of each &lt;OPTION&gt; to alter the way options are displayed. Note that you can set more than one option, separated by spaces (&lt;OPTION value="1" rel="sticky exclusive"&gt;One&lt;/OPTION&gt;):
+    rgbmultiselect builds its option list off of an existing SELECT list; options will be listed in the order in which they appear in the SELECT list. You can set the following flags in the "rel" attribute of each &lt;OPTION&gt; to alter the way options are displayed. Note that you can set more than one option, separated by non-alphanumeric characters (&lt;OPTION value="1" rel="sticky exclusive"&gt;One&lt;/OPTION&gt;):
     <ul>
-      <li><strong>hidden</strong>: this is a hidden option and should be omitted from the rgbmultiselect list altogether.</li>
+      <li><strong>hidden</strong>: this is a hidden option that is omitted from the rgbmultiselect list altogether.</li>
       <li><strong>sticky</strong>: this option should always appear at the top of the list (immediately below the Clear All / Select None option, if available; see below) and should not move if unselected.</li>
       <li><strong>exclusive</strong>: if this option is selected, all other options will be unselected. Additionally, if an exclusive option is already selected and another option is then selected, the exclusive option will be unselected.</li>
+      <li><strong>headercb, headernocb</strong>: denote an option as a header, either with (headercb) or without (headernocb) a check box</li>
+      <li><strong>child</strong>: denote an option as a child under a header.</li>
     </ul>
-    Note that, if you wish to make all options exclusive, use the <strong>allOptionsExclusive</strong> configuration option instead. This configuration option will be forced if the SELECT list does not have the "multiple" attribute set.
+    Notes:
+    <ul>
+      <li>If you wish to make all options exclusive, use the <strong>allOptionsExclusive</strong> configuration option instead. This configuration option will be forced if the SELECT list does not have the "multiple" attribute set.</li>
+      <li>Header and children setup is built by in-order parsing. Once an option is denoted as a header (by <strong>headercb</strong> or <strong>headernocb</strong>), all options immediately following it denoted as a child (by <strong>child</strong>) will become its children. The first option without a <strong>child</strong> flag will be a normal element (or another header, if the flag is set), and ends the list of children for that header.</li>
+    </ul>
 
   <div>
     <h3>Specifying configuration options:</h3>
@@ -300,11 +308,23 @@
 	<td>optionPropertiesField</td>
 	<td>The name of the attribute on the options field where properties for that option are stored.</td>
 	<td>"rel"</td>
-	<td></td>
+	<td>The "rel" field is used by default, but some tag libraries (like forms in JSTL) may not support "rel", so an alternative field (like "id") can be specified.</td>
       </tr>
       <tr>
 	<td>tabKeySelectsSingleFilteredUnselectedItem</td>
 	<td>If the user presses tab (to leave the field) after filtering to a single selected item, select that item.</td>
+	<td>false</td>
+	<td></td>
+      </tr>
+      <tr>
+	<td>keepSelectedItemsInPlace</td>
+	<td>Selected items can either be moved to a separate section at the top of the select box or kept in their original place. This is particularly useful for heirarchal headers.</td>
+	<td>false</td>
+	<td></td>
+      </tr>
+      <tr>
+	<td>selectingHeaderSelectsChildren</td>
+	<td>If an option has the <strong>headercb</strong> flag set and that option is selected, all of its child elements will also be selected. If it unselected, all child elements will be unselected. If a child element is unselected, the header will be unselected.</td>
 	<td>false</td>
 	<td></td>
       </tr>
@@ -343,6 +363,28 @@
     </ul>
   </div>
 
+  <h3>Triggers and Callbacks:</h3>
+
+  Triggers and Callbacks must be called on the original select box, not the resulting input box. This allows for chaining of rgbmultiselect invocation and callback setup. Examples follow the trigger and callback list:
+
+  <ul>
+    <li><strong>rgbms_reparse</strong>: Reparse the select list. Useful for when another script modifies the underlying select box directly and the rgbmultiselect widget needs to reparse it without being completely reapplied.</li>
+    <li><strong>rgbms_close</strong>: Close the select list. You could also trigger a blur() event on the input field.</li>
+    <li><strong>rgbms_toggle</strong>: Toggle an option as checked or unchecked. This callback takes two arguments. The first argument is the value of the target OPTION item. The second argument is a boolean flag to enable or disable cascading. This only applies in the case of header/child elements and only when the selectingHeaderSelectsChildren option is enabled. If cascade is set to true (the default), checking/unchecking a header option will also check/uncheck the children. If false, only the header option will be checked/unchecked.</li>
+    <li><strong>rgbms_change</strong>: Invokes the function (supplied as an argument) when the select box is changed. The function is provided two arguments: the first is the default jQuery event object. The second is an object containing information about the OPTION value that was changed.</li>
+    <li><strong>rgbms_enter</strong>: Invokes the function (supplied as an argument) when the user focuses on the input box and opens the widget.</li>
+    <li><strong>rgbms_preleave</strong>: Invokes the function (supplied as an argument) immediately after the user leaves the select box but before the close actions are taken (hiding the options field, updating the text in the input field, etc). This callback is useful if the select list needs to be modified prior to showing the closed state.</li>
+    <li><strong>rgbms_postleave</strong>: Invokes the function (supplied as an argument) after all close actions are taken.</li>
+  </ul>
+
+  All callbacks can be invoked in the following manner:
+
+  <div class="code">
+  <pre>  $("#picknumbers")
+    .rgbmultiselect()
+    .rgbms_change(function(event,value) {alert('changed');});</pre>
+  </div>
+
   <h3>Back button behavior:</h3>
 
   Some browsers don't support auto-filling some form fields when the user clicks "Back" if form fields have been added using JavaScript. To address this issue, if you specify an input field with an ID in the pattern expected by the plugin, it will detect and use that input field instead of creating one.
@@ -353,9 +395,9 @@
 
   <a name="download"></a>
   <h2>Download</h2>
-  <a href="rgbmultiselect-1.0.5.zip">The whole package</a> - includes script, minified version, style sheet, icon, example HTML file, and jQuery 1.3.2
+  <a href="rgbmultiselect-1.1.0.zip">The whole package</a> - includes script, minified version, style sheet, icon, example HTML file, and jQuery 1.3.2
   <br/><br/>
-  Just the script: <a href="rgbmultiselect-1.0.5.min.js">minified</a> (24K)&nbsp;&nbsp;|&nbsp;&nbsp;<a href="rgbmultiselect-1.0.5.packed.js">packed</a> (13K)&nbsp;&nbsp;|&nbsp;&nbsp;<a href="rgbmultiselect-1.0.5.js">development</a> (33K)
+  Just the script: <a href="rgbmultiselect-1.1.0.min.js">minified</a> (31K)&nbsp;&nbsp;|&nbsp;&nbsp;<a href="rgbmultiselect-1.1.0.packed.js">packed</a> (16K)&nbsp;&nbsp;|&nbsp;&nbsp;<a href="rgbmultiselect-1.1.0.js">development</a> (50K, includes test suite)
   <br/><br/>
   Others: <a href="rgbmultiselect.gif">icon</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="rgbmultiselect.css">stylesheet</a>
     
