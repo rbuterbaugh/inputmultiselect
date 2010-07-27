@@ -396,6 +396,7 @@
      function filterOptions(str) {
        str+="";
        var strParts=str.split(/ +/);
+       // clear any existing filtered matches
        if (optionsNumMatching == 1) {
 	 optionsOneSelectedMatch.parent().removeClass("jquery_rgbmultiselect_options_item_singlefiltered");
 	 var value=getItemId(optionsOneSelectedMatch,optionsOneSelectedMatchType);
@@ -422,11 +423,11 @@
 		 restoreOptionText(optionText,o);
 	       } else {
 		 optionText.html(replaceAll(selectCache[o].text,strParts));
+		 optionsNumMatching++;
+		 // store this item and type in case it is a single match
+		 optionsOneSelectedMatch=cur;
+		 optionsOneSelectedMatchType=type;
 	       }
-	       optionsNumMatching++;
-	       // store this item and type in case it is a single match
-	       optionsOneSelectedMatch=cur;
-	       optionsOneSelectedMatchType=type;
 	       parentItem.show();
 	     } else {
 	       restoreOptionText(optionText,o);
