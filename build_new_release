@@ -3,6 +3,9 @@
 $old_release=$ARGV[0];
 $new_release=$ARGV[1];
 
+$jsmin="jsmin";
+$pack="php ~/packer/example-file.php";
+
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year+=1900;
 
@@ -28,13 +31,13 @@ print F $line;
 close F;
 
 # minify new release js
-`jsmin <inputmultiselect-$new_release.js.notest >inputmultiselect-$new_release.min.js.tmp`;
+`$jsmin <inputmultiselect-$new_release.js.notest >inputmultiselect-$new_release.min.js.tmp`;
 `cat inputmultiselect.copyright.txt|sed 's/%VERSION%/$new_release/g'|sed 's/%YEAR%/$year/g'>inputmultiselect-$new_release.min.js`;
 `cat inputmultiselect-$new_release.min.js.tmp >> inputmultiselect-$new_release.min.js`;
 `rm inputmultiselect-$new_release.min.js.tmp`;
 
 # pack new release js
-`php ~/packer/example-file.php inputmultiselect-$new_release.js.notest inputmultiselect-$new_release.packed.js.tmp`;
+`$pack inputmultiselect-$new_release.js.notest inputmultiselect-$new_release.packed.js.tmp`;
 `cat inputmultiselect.copyright.txt|sed 's/%VERSION%/$new_release/g'|sed 's/%YEAR%/$year/g'>inputmultiselect-$new_release.packed.js`;
 `cat inputmultiselect-$new_release.packed.js.tmp >> inputmultiselect-$new_release.packed.js`;
 `rm inputmultiselect-$new_release.packed.js.tmp`;

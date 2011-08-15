@@ -34,20 +34,20 @@ $(document).ready(
 	  keepSelectedItemsInPlace: true,
 	  selectingHeaderSelectsChildren: true
 	})
-      .inpmss_change(
+      .inpms_change(
 	function(event,data) {
 	  if (typeof console != "undefined") {
 	    console.log("change");
 	    console.log(data);
 	  }
 	})
-      .inpmss_enter(
+      .inpms_enter(
 	function() {
 	  if (typeof console != "undefined") {
 	    console.log("enter");
 	  }
 	})
-      .inpmss_postleave(
+      .inpms_postleave(
 	function() {
 	  if (typeof console != "undefined") {
 	    console.log("leave");
