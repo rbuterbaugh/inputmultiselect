@@ -1,4 +1,4 @@
-.jquery_rgbmultiselect_ie6_iframe
+.jquery_inputmultiselect_ie6_iframe
 {
   position: absolute;
   display: none;
@@ -9,22 +9,22 @@
   z-index: 99;
 }
 
-.jquery_rgbmultiselect_input
+.jquery_inputmultiselect_input
 { 
   color: black;
   background-color: white;
-  background-image: url(rgbmultiselect.gif);
+  background-image: url(inputmultiselect.gif);
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-position: center right;
   }
 
-.jquery_rgbmultiselect_blurred
+.jquery_inputmultiselect_blurred
 { 
   color: gray !important;
   }
 
-.jquery_rgbmultiselect_options_container
+.jquery_inputmultiselect_options_container
 { 
   text-align: left;
   position: absolute;
@@ -42,37 +42,37 @@
   z-index: 100;
   }
 
-.jquery_rgbmultiselect_options_helptext
+.jquery_inputmultiselect_options_helptext
 {
   color: gray;
   margin: 2px;
   }
 
-.jquery_rgbmultiselect_options_item,
-.jquery_rgbmultiselect_options_item SPAN
+.jquery_inputmultiselect_options_item,
+.jquery_inputmultiselect_options_item SPAN
 { 
   cursor: pointer;
   }
 
-DIV.jquery_rgbmultiselect_options_headernocb,
-DIV.jquery_rgbmultiselect_options_headernocb SPAN
+DIV.jquery_inputmultiselect_options_headernocb,
+DIV.jquery_inputmultiselect_options_headernocb SPAN
 {
   cursor: auto;
   }
 
-.jquery_rgbmultiselect_options_item INPUT
+.jquery_inputmultiselect_options_item INPUT
 { 
   vertical-align: middle;
 }
 
-.jquery_rgbmultiselect_options_child_sticky INPUT,
-.jquery_rgbmultiselect_options_child_unselected INPUT,
-.jquery_rgbmultiselect_options_child_selected INPUT
+.jquery_inputmultiselect_options_child_sticky INPUT,
+.jquery_inputmultiselect_options_child_unselected INPUT,
+.jquery_inputmultiselect_options_child_selected INPUT
 { 
   margin-left: 10px;
 }
 
-.jquery_rgbmultiselect_options_item SPAN .jquery_rgbmultiselect_options_text_filtermatch
+.jquery_inputmultiselect_options_item SPAN .jquery_inputmultiselect_options_text_filtermatch
 { 
   font-weight: bold;
 }
@@ -80,51 +80,51 @@ DIV.jquery_rgbmultiselect_options_headernocb SPAN
 /*
 If you want the text after the checkboxes to wrap bulleted-list style, use something like this:
 
-.jquery_rgbmultiselect_options_cleartext .jquery_rgbmultiselect_options_item SPAN,
-.jquery_rgbmultiselect_options_sticky .jquery_rgbmultiselect_options_item SPAN
+.jquery_inputmultiselect_options_cleartext .jquery_inputmultiselect_options_item SPAN,
+.jquery_inputmultiselect_options_sticky .jquery_inputmultiselect_options_item SPAN
 { 
   width: auto;
 }
 
-.jquery_rgbmultiselect_options_item SPAN
+.jquery_inputmultiselect_options_item SPAN
 { 
   display: inline-block;
   width: 190px;
 }
 */
 
-.jquery_rgbmultiselect_options_item
+.jquery_inputmultiselect_options_item
 { 
   border: 1px solid white;
   line-height: 20px;
  }
 
-.jquery_rgbmultiselect_options_selected_item
+.jquery_inputmultiselect_options_selected_item
 { 
   background-color: #223388;
   border: 1px solid #223388;
   color: white;
   }
 
-.jquery_rgbmultiselect_options_item_arrownav_selected
+.jquery_inputmultiselect_options_item_arrownav_selected
 { 
   border: 1px solid #777777;
  }
 
-.jquery_rgbmultiselect_options_item_hovered
+.jquery_inputmultiselect_options_item_hovered
 { 
   color: white;
   border: 1px solid #FF6D00;
   background-color: #FF6D00;
   }
 
-.jquery_rgbmultiselect_options_item_singlefiltered
+.jquery_inputmultiselect_options_item_singlefiltered
 { 
   color: white;
   background-color: #FF6D00;
   }
 
-.jquery_rgbmultiselect_options_unselected
+.jquery_inputmultiselect_options_unselected
 { 
   height: 150px;
   overflow-x: hidden;

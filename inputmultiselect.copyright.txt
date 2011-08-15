@@ -1,9 +1,12 @@
 /*!
- * jQuery rgbmultiselect plugin v%VERSION%
- *  http://ryan.buterbaugh.org/rgbmultiselect/
+ * jQuery inputmultiselect plugin v%VERSION%
+ *  http://ryan.buterbaugh.org/inputmultiselect/
  * 
  * Copyright (c) %YEAR% Ryan Buterbaugh
  *  http://ryan.buterbaugh.org/
+ *
+ * Forked from "jQuery rgbmultiselect plugin v1.1.1"
+ *  http://www.southwest.com/assets/v29562/scripts/carSelectCombined.min.js
  *
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
