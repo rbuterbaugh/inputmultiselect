@@ -56,12 +56,3 @@ close F;
 `zip -r inputmultiselect-$new_release.zip inputmultiselect-$new_release/`;
 `rm -rf inputmultiselect-$new_release/`;
 `cat index.html|sed 's/$old_release/$new_release/g'>index.html.tmp && mv index.html.tmp index.html`;
-
-# move old files
-`svn mv inputmultiselect-$old_release.js oldversions/`;
-`svn mv inputmultiselect-$old_release.min.js oldversions/`;
-`svn mv inputmultiselect-$old_release.packed.js oldversions/`;
-`svn mv inputmultiselect-$old_release.zip oldversions/`;
-
-# add new files
-`svn add inputmultiselect-$new_release.js inputmultiselect-$new_release.min.js inputmultiselect-$new_release.packed.js inputmultiselect-$new_release.zip`;
