@@ -13,53 +13,52 @@ for ($i=0;$i<2;$i++) {
     }
 }
 
-if (!-f "rgbmultiselect-$new_release.js" || !-f "rgbmultiselect-$old_release.js") {
+if (!-f "inputmultiselect-$new_release.js" || !-f "inputmultiselect-$old_release.js") {
     print "Error: javascript file is missing\n";
     exit;
 }
 
-open(F,"rgbmultiselect-$new_release.js");
+open(F,"inputmultiselect-$new_release.js");
 @lines=<F>;
 close F;
 $line=join('',@lines);
 $line=~s/\/\*BEGINTEST\*\/.*?\/\*ENDTEST\*\///gs;
-open(F,">rgbmultiselect-$new_release.js.notest");
+open(F,">inputmultiselect-$new_release.js.notest");
 print F $line;
 close F;
 
 # minify new release js
-`jsmin <rgbmultiselect-$new_release.js.notest >rgbmultiselect-$new_release.min.js.tmp`;
-`cat rgbmultiselect.copyright.txt|sed 's/%VERSION%/$new_release/g'|sed 's/%YEAR%/$year/g'>rgbmultiselect-$new_release.min.js`;
-`cat rgbmultiselect-$new_release.min.js.tmp >> rgbmultiselect-$new_release.min.js`;
-`rm rgbmultiselect-$new_release.min.js.tmp`;
+`jsmin <inputmultiselect-$new_release.js.notest >inputmultiselect-$new_release.min.js.tmp`;
+`cat inputmultiselect.copyright.txt|sed 's/%VERSION%/$new_release/g'|sed 's/%YEAR%/$year/g'>inputmultiselect-$new_release.min.js`;
+`cat inputmultiselect-$new_release.min.js.tmp >> inputmultiselect-$new_release.min.js`;
+`rm inputmultiselect-$new_release.min.js.tmp`;
 
 # pack new release js
-`php ~/packer/example-file.php rgbmultiselect-$new_release.js.notest rgbmultiselect-$new_release.packed.js.tmp`;
-`cat rgbmultiselect.copyright.txt|sed 's/%VERSION%/$new_release/g'|sed 's/%YEAR%/$year/g'>rgbmultiselect-$new_release.packed.js`;
-`cat rgbmultiselect-$new_release.packed.js.tmp >> rgbmultiselect-$new_release.packed.js`;
-`rm rgbmultiselect-$new_release.packed.js.tmp`;
+`php ~/packer/example-file.php inputmultiselect-$new_release.js.notest inputmultiselect-$new_release.packed.js.tmp`;
+`cat inputmultiselect.copyright.txt|sed 's/%VERSION%/$new_release/g'|sed 's/%YEAR%/$year/g'>inputmultiselect-$new_release.packed.js`;
+`cat inputmultiselect-$new_release.packed.js.tmp >> inputmultiselect-$new_release.packed.js`;
+`rm inputmultiselect-$new_release.packed.js.tmp`;
 
-`rm rgbmultiselect-$new_release.js.notest`;
+`rm inputmultiselect-$new_release.js.notest`;
 
 # extract example package
-`unzip rgbmultiselect-$old_release.zip`;
+`unzip inputmultiselect-$old_release.zip`;
 
 # build example package directory
-`mv rgbmultiselect-$old_release rgbmultiselect-$new_release`;
-`rm rgbmultiselect-$new_release/rgbmultiselect-$old_release.js rgbmultiselect-$new_release/rgbmultiselect-$old_release.min.js`;
-`cp rgbmultiselect-$new_release.js rgbmultiselect-$new_release/`;
-`cp rgbmultiselect-$new_release.min.js rgbmultiselect-$new_release/`;
-`cat rgbmultiselect-$new_release/index.html|sed 's/$old_release/$new_release/g'>rgbmultiselect-$new_release/index.html`;
-`zip -r rgbmultiselect-$new_release.zip rgbmultiselect-$new_release/`;
-`rm -rf rgbmultiselect-$new_release/`;
-`cat index.html|sed 's/$old_release/$new_release/g'>index.html.tmp`;
-`mv index.html.tmp index.html`;
+`mv inputmultiselect-$old_release inputmultiselect-$new_release`;
+`rm inputmultiselect-$new_release/inputmultiselect-$old_release.js inputmultiselect-$new_release/inputmultiselect-$old_release.min.js`;
+`cp inputmultiselect-$new_release.js inputmultiselect-$new_release/`;
+`cp inputmultiselect-$new_release.min.js inputmultiselect-$new_release/`;
+`cat inputmultiselect-$new_release/index.html|sed 's/$old_release/$new_release/g'>inputmultiselect-$new_release/index.html`;
+`zip -r inputmultiselect-$new_release.zip inputmultiselect-$new_release/`;
+`rm -rf inputmultiselect-$new_release/`;
+`cat index.html|sed 's/$old_release/$new_release/g'>index.html.tmp && mv index.html.tmp index.html`;
 
 # move old files
-`svn mv rgbmultiselect-$old_release.js oldversions/`;
-`svn mv rgbmultiselect-$old_release.min.js oldversions/`;
-`svn mv rgbmultiselect-$old_release.packed.js oldversions/`;
-`svn mv rgbmultiselect-$old_release.zip oldversions/`;
+`svn mv inputmultiselect-$old_release.js oldversions/`;
+`svn mv inputmultiselect-$old_release.min.js oldversions/`;
+`svn mv inputmultiselect-$old_release.packed.js oldversions/`;
+`svn mv inputmultiselect-$old_release.zip oldversions/`;
 
 # add new files
-`svn add rgbmultiselect-$new_release.js rgbmultiselect-$new_release.min.js rgbmultiselect-$new_release.packed.js rgbmultiselect-$new_release.zip`;
+`svn add inputmultiselect-$new_release.js inputmultiselect-$new_release.min.js inputmultiselect-$new_release.packed.js inputmultiselect-$new_release.zip`;

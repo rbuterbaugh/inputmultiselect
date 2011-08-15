@@ -1,19 +1,19 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us">
 <head>
-<title>rgbmultiselect - a jQuery plugin for choosing multiple options from SELECT lists</title>
+<title>inputmultiselect - a new jQuery plugin for choosing multiple options from SELECT lists</title>
 <script type="text/javascript" src="jquery-1.4.2.js"></script>
-<script type="text/javascript" src="rgbmultiselect-1.1.1.js"></script>
+<script type="text/javascript" src="inputmultiselect-2.0.3.js"></script>
 <script type="text/javascript" src="index.js"></script>
-<link rel="stylesheet" type="text/css" href="rgbmultiselect.css"/>
+<link rel="stylesheet" type="text/css" href="inputmultiselect.css"/>
 <link rel="stylesheet" type="text/css" href="index.css"/>
 </head>
 <body>
 <form action="process.php" method="post">
 <div id="topbar">
   <div style="float:left;width:70%">
-    <h1><span class="r">r</span><span class="g">g</span><span class="b">b</span>multi<span class="s">select</span> (v1.1.1)</h1>
-    <h3>a jQuery plugin for choosing multiple options from SELECT lists</h3>
+    <h1>input<span class="s">multi</span>select (v2.0.3)</h1>
+    <h3>a new jQuery plugin for choosing multiple options from SELECT lists</h3>
   </div>
   <div style="float:right;text-align:right;width:25%;margin-top:10px">
     <h2>by <a href="http://ryan.buterbaugh.org/">Ryan Buterbaugh</a></h2>
@@ -34,7 +34,7 @@
 
   <a name="intro"></a>
   <h2>Introduction</h2>
-  rgbmultiselect is a <a href="http://jquery.com/">jQuery</a> plugin that turns standard HTML SELECT fields (single and multiple) into easier-to-use widgets. Users can more easily select and filter options and use both the mouse and keyboard to interact with the options. It has a variety of features and configuration options, including:
+  inputmultiselect is a <a href="http://jquery.com/">jQuery</a> plugin that turns standard HTML SELECT fields (single and multiple) into easier-to-use widgets. Users can more easily select and filter options and use both the mouse and keyboard to interact with the options. It has a variety of features and configuration options, including:
   <ul>
     <li>widget fits in the space of a single text input field</li>
     <li>supports sticky and exclusive options</li>
@@ -47,12 +47,18 @@
   </ul>
 
   <br/><br/>
-  rgbmultiselect is copyright &copy; 2010 Ryan Buterbaugh and is dual-licensed under the MIT and GPL licenses:
+  inputmultiselect is copyright &copy; 2010 Ryan Buterbaugh and is dual-licensed under the MIT and GPL licenses:
   <ul>
     <li><a href="http://www.opensource.org/licenses/mit-license.php">MIT license</a></li>
     <li><a href="http://www.gnu.org/licenses/gpl.html">GPL license</a></li>
   </ul>
 
+  <br/><br/>
+  inputmultiselect was forked from "jQuery rgbmultiselect plugin v1.1.1"
+  <ul>
+    <li><a href="http://www.southwest.com/assets/v29562/scripts/carSelectCombined.min.js">http://www.southwest.com/assets/v29562/scripts/carSelectCombined.min.js</a></li>
+  </ul>
+  
   <a name="demo"></a>
   <h2>Demo</h2>
 
@@ -72,11 +78,11 @@
       <option value="9">Nine</option>
       <option value="10">Ten</option>
     </select>
-    <input type="text" id="picknumbers_rgbmultiselect" name="picknumbers_rgbmultiselect" style="display:none;width:250px"/><br/>
+    <input type="text" id="picknumbers_inputmultiselect" name="picknumbers_inputmultiselect" style="display:none;width:250px"/><br/>
     <input type=submit>
     <script type="text/javascript">
     document.getElementById('picknumbers').style.display='none';
-    document.getElementById('picknumbers_rgbmultiselect').style.display='';
+    document.getElementById('picknumbers_inputmultiselect').style.display='';
     </script>
   </div>
 
@@ -96,17 +102,17 @@
       <option value="9">Nine</option>
       <option value="10">Ten</option>
     </select>
-    <input type="text" id="pick3numbers_rgbmultiselect" name="pick3numbers_rgbmultiselect" style="display:none;width:250px"/><br/>
+    <input type="text" id="pick3numbers_inputmultiselect" name="pick3numbers_inputmultiselect" style="display:none;width:250px"/><br/>
     <input type=submit>
     <script type="text/javascript">
     document.getElementById('pick3numbers').style.display='none';
-    document.getElementById('pick3numbers_rgbmultiselect').style.display='';
+    document.getElementById('pick3numbers_inputmultiselect').style.display='';
     </script>
   </div>
 
   <a name="example"></a>
   <h2>A Simple Example</h2>
-  In a nutshell, rgbmultiselect turns this:<br/>
+  In a nutshell, inputmultiselect turns this:<br/>
   <select name="picknumbersnormal" size=4 multiple="multiple" style="width:200px;margin:10px">
     <option value="0">Zero</option>
     <option value="1">One</option>
@@ -121,7 +127,7 @@
     <option value="10">Ten</option>
   </select>
   <br/>...into this:<br/>
-  <select id="picknumbersrgb" name="picknumbersrgb[]" size="5" style="width:250px" multiple="multiple">
+  <select id="picknumbersms" name="picknumbersms[]" size="5" style="width:250px" multiple="multiple">
     <option rel="hidden" value="">Select a few...</option>
     <option value="0">Zero</option>
     <option value="1">One</option>
@@ -135,13 +141,13 @@
     <option value="9">Nine</option>
     <option value="10">Ten</option>
   </select>
-  <input type="text" id="picknumbersrgb_rgbmultiselect" name="picknumbersrgb_rgbmultiselect" style="display:none;width:250px;margin:10px"/><br/>
+  <input type="text" id="picknumbersms_inputmultiselect" name="picknumbersms_inputmultiselect" style="display:none;width:250px;margin:10px"/><br/>
   <script type="text/javascript">
-  document.getElementById('picknumbersrgb').style.display='none';
-  document.getElementById('picknumbersrgb_rgbmultiselect').style.display='';
+  document.getElementById('picknumbersms').style.display='none';
+  document.getElementById('picknumbersms_inputmultiselect').style.display='';
   </script>
   <div>
-    How? All you do is call the rgbmultiselect plugin on your existing SELECT object that has an ID attribute, like so:
+    How? All you do is call the inputmultiselect plugin on your existing SELECT object that has an ID attribute, like so:
   </div>
 
   <div style="margin:10px">
@@ -159,13 +165,13 @@
       <option value="9">Nine</option>
       <option value="10">Ten</option>
     </select>
-    <input type="button" onclick="$('#picknumbersexample').rgbmultiselect();$(this).hide()" value="call $('#picknumbersexample').rgbmultiselect();" style="margin-left:100px"/>
+    <input type="button" onclick="$('#picknumbersexample').inputmultiselect();$(this).hide()" value="call $('#picknumbersexample').inputmultiselect();" style="margin-left:100px"/>
     <input type="button" onclick="$('#picknumbersexample').toggle();" value="toggle showing the SELECT box" style="margin-left:30px"/>
   </div>
 
-  If you click "toggle showing the SELECT box", you can see that the SELECT box is still in the document. When you select an option in the rgbmultiselect, the SELECT box is updated automatically. This maximizes compatibility for both JavaScript and non-JavaScript behaviors.
+  If you click "toggle showing the SELECT box", you can see that the SELECT box is still in the document. When you select an option in the inputmultiselect, the SELECT box is updated automatically. This maximizes compatibility for both JavaScript and non-JavaScript behaviors.
   <br/><br/>
-  <strong>Note:</strong> we are giving you the ability to see the SELECT box purely for demonstration purposes. rgbmultiselect only parses the SELECT box once (for maximum DOM efficiency with long lists), then maintains the state of the SELECT box in memory, so if you alter the SELECT box directly, rgbmultiselect won't see the change.
+  <strong>Note:</strong> we are giving you the ability to see the SELECT box purely for demonstration purposes. inputmultiselect only parses the SELECT box once (for maximum DOM efficiency with long lists), then maintains the state of the SELECT box in memory, so if you alter the SELECT box directly, inputmultiselect won't see the change.
 
   <a name="config"></a>
   <h2>Setup and Configuration</h2>
@@ -173,9 +179,9 @@
   <div>
     <h3>Select list setup:</h3>
 
-    rgbmultiselect builds its option list off of an existing SELECT list; options will be listed in the order in which they appear in the SELECT list. You can set the following flags in the "rel" attribute of each &lt;OPTION&gt; to alter the way options are displayed. Note that you can set more than one option, separated by non-alphanumeric characters (&lt;OPTION value="1" rel="sticky exclusive"&gt;One&lt;/OPTION&gt;):
+    inputmultiselect builds its option list off of an existing SELECT list; options will be listed in the order in which they appear in the SELECT list. You can set the following flags in the "rel" attribute of each &lt;OPTION&gt; to alter the way options are displayed. Note that you can set more than one option, separated by non-alphanumeric characters (&lt;OPTION value="1" rel="sticky exclusive"&gt;One&lt;/OPTION&gt;):
     <ul>
-      <li><strong>hidden</strong>: this is a hidden option that is omitted from the rgbmultiselect list altogether.</li>
+      <li><strong>hidden</strong>: this is a hidden option that is omitted from the inputmultiselect list altogether.</li>
       <li><strong>sticky</strong>: this option should always appear at the top of the list (immediately below the Clear All / Select None option, if available; see below) and should not move if unselected.</li>
       <li><strong>exclusive</strong>: if this option is selected, all other options will be unselected. Additionally, if an exclusive option is already selected and another option is then selected, the exclusive option will be unselected.</li>
       <li><strong>headercb, headernocb</strong>: denote an option as a header, either with (headercb) or without (headernocb) a check box</li>
@@ -194,9 +200,9 @@
   </div>
 
   <div class="code">
-  <pre>  $("#picknumbers").rgbmultiselect();
+  <pre>  $("#picknumbers").inputmultiselect();
 
-  $("#pick3numbers").rgbmultiselect({
+  $("#pick3numbers").inputmultiselect({
 				      maxSelections: 3,
                                       helpText: "Select some options"
 				    });</pre>
@@ -260,7 +266,7 @@
 	<td>allOptionsExclusive</td>
 	<td>If set to true, only one option can ever be selected at a time.</td>
 	<td>false</td>
-	<td>This will automatically be set to true if rgbmultiselect is applied to a SELECT field without a "multiple" attribute.</td>
+	<td>This will automatically be set to true if inputmultiselect is applied to a SELECT field without a "multiple" attribute.</td>
       </tr>
       <tr>
 	<td>pageUpDownDistance</td>
@@ -365,41 +371,41 @@
 
   <h3>Triggers and Callbacks:</h3>
 
-  Triggers and Callbacks must be called on the original select box, not the resulting input box. This allows for chaining of rgbmultiselect invocation and callback setup. Examples follow the trigger and callback list:
+  Triggers and Callbacks must be called on the original select box, not the resulting input box. This allows for chaining of inputmultiselect invocation and callback setup. Examples follow the trigger and callback list:
 
   <ul>
-    <li><strong>rgbms_reparse</strong>: Reparse the select list. Useful for when another script modifies the underlying select box directly and the rgbmultiselect widget needs to reparse it without being completely reapplied.</li>
-    <li><strong>rgbms_close</strong>: Close the select list. You could also trigger a blur() event on the input field.</li>
-    <li><strong>rgbms_toggle</strong>: Toggle an option as checked or unchecked. This callback takes two arguments. The first argument is the value of the target OPTION item. The second argument is a boolean flag to enable or disable cascading. This only applies in the case of header/child elements and only when the selectingHeaderSelectsChildren option is enabled. If cascade is set to true (the default), checking/unchecking a header option will also check/uncheck the children. If false, only the header option will be checked/unchecked.</li>
-    <li><strong>rgbms_change</strong>: Invokes the function (supplied as an argument) when the select box is changed. The function is provided two arguments: the first is the default jQuery event object. The second is an object containing information about the OPTION value that was changed.</li>
-    <li><strong>rgbms_enter</strong>: Invokes the function (supplied as an argument) when the user focuses on the input box and opens the widget.</li>
-    <li><strong>rgbms_preleave</strong>: Invokes the function (supplied as an argument) immediately after the user leaves the select box but before the close actions are taken (hiding the options field, updating the text in the input field, etc). This callback is useful if the select list needs to be modified prior to showing the closed state.</li>
-    <li><strong>rgbms_postleave</strong>: Invokes the function (supplied as an argument) after all close actions are taken.</li>
+    <li><strong>inpms_reparse</strong>: Reparse the select list. Useful for when another script modifies the underlying select box directly and the inputmultiselect widget needs to reparse it without being completely reapplied.</li>
+    <li><strong>inpms_close</strong>: Close the select list. You could also trigger a blur() event on the input field.</li>
+    <li><strong>inpms_toggle</strong>: Toggle an option as checked or unchecked. This callback takes two arguments. The first argument is the value of the target OPTION item. The second argument is a boolean flag to enable or disable cascading. This only applies in the case of header/child elements and only when the selectingHeaderSelectsChildren option is enabled. If cascade is set to true (the default), checking/unchecking a header option will also check/uncheck the children. If false, only the header option will be checked/unchecked.</li>
+    <li><strong>inpms_change</strong>: Invokes the function (supplied as an argument) when the select box is changed. The function is provided two arguments: the first is the default jQuery event object. The second is an object containing information about the OPTION value that was changed.</li>
+    <li><strong>inpms_enter</strong>: Invokes the function (supplied as an argument) when the user focuses on the input box and opens the widget.</li>
+    <li><strong>inpms_preleave</strong>: Invokes the function (supplied as an argument) immediately after the user leaves the select box but before the close actions are taken (hiding the options field, updating the text in the input field, etc). This callback is useful if the select list needs to be modified prior to showing the closed state.</li>
+    <li><strong>inpms_postleave</strong>: Invokes the function (supplied as an argument) after all close actions are taken.</li>
   </ul>
 
   All callbacks can be invoked in the following manner:
 
   <div class="code">
   <pre>  $("#picknumbers")
-    .rgbmultiselect()
-    .rgbms_change(function(event,value) {alert('changed');});</pre>
+    .inputmultiselect()
+    .inpms_change(function(event,value) {alert('changed');});</pre>
   </div>
 
   <h3>Back button behavior:</h3>
 
   Some browsers don't support auto-filling some form fields when the user clicks "Back" if form fields have been added using JavaScript. To address this issue, if you specify an input field with an ID in the pattern expected by the plugin, it will detect and use that input field instead of creating one.
   <br/><br/>
-  For example, if you have a SELECT box with an ID of "auto_manufacturers", the plugin will first look for an input field with the ID "auto_manufacturers_rgbmultiselect" before creating an input field on its own.
+  For example, if you have a SELECT box with an ID of "auto_manufacturers", the plugin will first look for an input field with the ID "auto_manufacturers_inputmultiselect" before creating an input field on its own.
   <br/><br/>
   Additionally, if you want your input field to be a different size than your SELECT box, you can set that size as a style on the input field and the plugin won't alter it. If the plugin creates the input field, it will make it have the same width as the original SELECT box.
 
   <a name="download"></a>
   <h2>Download</h2>
-  <a href="rgbmultiselect-1.1.1.zip">The whole package</a> - includes script, minified version, style sheet, icon, example HTML file, and jQuery 1.4.2
+  <a href="inputmultiselect-2.0.3.zip">The whole package</a> - includes script, minified version, style sheet, icon, example HTML file, and jQuery 1.4.2
   <br/><br/>
-  Just the script: <a href="rgbmultiselect-1.1.1.min.js">minified</a> (31K)&nbsp;&nbsp;|&nbsp;&nbsp;<a href="rgbmultiselect-1.1.1.packed.js">packed</a> (16K)&nbsp;&nbsp;|&nbsp;&nbsp;<a href="rgbmultiselect-1.1.1.js">development</a> (50K, includes test suite)
+  Just the script: <a href="inputmultiselect-2.0.3.min.js">minified</a> (31K)&nbsp;&nbsp;|&nbsp;&nbsp;<a href="inputmultiselect-2.0.3.packed.js">packed</a> (16K)&nbsp;&nbsp;|&nbsp;&nbsp;<a href="inputmultiselect-2.0.3.js">development</a> (50K, includes test suite)
   <br/><br/>
-  Others: <a href="rgbmultiselect.gif">icon</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="rgbmultiselect.css">stylesheet</a>
+  Others: <a href="inputmultiselect.gif">icon</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="inputmultiselect.css">stylesheet</a>
     
   <a name="reqs"></a>
   <h2>Requirements</h2>
@@ -421,15 +427,9 @@
   
   <a name="credits"></a>
   <h2>Credits</h2>
-  Written by <a href="http://ryan.buterbaugh.org/">Ryan Buterbaugh</a>
+  Written by <a href="http://ryan.buterbaugh.org/">Ryan Buterbaugh</a>, testing and support by <a href="http://www.thoughtworks.com/">ThoughtWorks</a>.
   <br/><br/>
-  Testing and support by:
-  <ul>
-    <li><a href="http://www.thoughtworks.com/">ThoughtWorks</a></li>
-    <li><a href="http://www.diamondconsultants.com/">Diamond Consultants</a></li>
-  </ul>
-  <br/>
-  And thanks to <a href="http://ejohn.org/">John Resig</a> for <a href="http://jquery.com/">jQuery</a>, for making my life easier    
+  Finally, thanks to <a href="http://ejohn.org/">John Resig</a> for <a href="http://jquery.com/">jQuery</a>, for making my life easier    
 </div>
 </form>
 <script type="text/javascript">

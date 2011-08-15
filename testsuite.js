@@ -2,7 +2,7 @@ $(document).ready(
   function() {
     $("#picknumbers2 OPTION[value=fivesixseven]").removeAttr("selected");
     $('#picknumbers2')
-      .rgbmultiselect(
+      .inputmultiselect(
 	{
 	  clearAllSelectNoneAvailable: true,
 	  clearAllSelectNoneText: 'No Preference',
@@ -10,22 +10,22 @@ $(document).ready(
 	  keepSelectedItemsInPlace: true,
 	  selectingHeaderSelectsChildren: true
 	})
-      .rgbms_enter(
+      .inpms_enter(
 	function() {
 	  if (!$("#picknumbers2 OPTION[value=fivesixseven]").attr("selected") &&
 	      $("#picknumbers2 OPTION.child").size() == $("#picknumbers2 OPTION.child:selected").size()) {
-	    $("#picknumbers2").rgbms_toggle("fivesixseven");
+	    $("#picknumbers2").inpms_toggle("fivesixseven");
 	  }
 	})
-      .rgbms_preleave(
+      .inpms_preleave(
 	function() {
 	  if ($("#picknumbers2 OPTION[value=fivesixseven]").attr("selected")) {
-	    $("#picknumbers2").rgbms_toggle("fivesixseven",false);
+	    $("#picknumbers2").inpms_toggle("fivesixseven",false);
 	  }
 	});
 
     $('#picknumbers')
-      .rgbmultiselect(
+      .inputmultiselect(
 	{
 	  runTests: true,
 	  fieldTextFormatOnBlur: "%c: %o + %a more",
@@ -34,20 +34,20 @@ $(document).ready(
 	  keepSelectedItemsInPlace: true,
 	  selectingHeaderSelectsChildren: true
 	})
-      .rgbms_change(
+      .inpmss_change(
 	function(event,data) {
 	  if (typeof console != "undefined") {
 	    console.log("change");
 	    console.log(data);
 	  }
 	})
-      .rgbms_enter(
+      .inpmss_enter(
 	function() {
 	  if (typeof console != "undefined") {
 	    console.log("enter");
 	  }
 	})
-      .rgbms_postleave(
+      .inpmss_postleave(
 	function() {
 	  if (typeof console != "undefined") {
 	    console.log("leave");

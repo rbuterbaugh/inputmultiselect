@@ -1,8 +1,8 @@
 $(document).ready(function() {
-  $("#pick3numbers").rgbmultiselect({
+  $("#pick3numbers").inputmultiselect({
     maxSelections: 3
   });
 
-  $("#picknumbers").rgbmultiselect();
-  $("#picknumbersrgb").rgbmultiselect();
+  $("#picknumbers").inputmultiselect();
+  $("#picknumbersms").inputmultiselect();
 });
