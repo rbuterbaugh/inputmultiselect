@@ -35,4 +35,8 @@ close F;
 `cat inputmultiselect-$new_release.min.js.tmp >> inputmultiselect-$new_release.min.js`;
 `rm inputmultiselect-$new_release.min.js.tmp`;
 
+# symlink new release
+`rm -f inputmultiselect.min.js`;
+`ln -s inputmultiselect-$new_release.min.js inputmultiselect.min.js`;
+
 `rm inputmultiselect-$new_release.js.notest`;
