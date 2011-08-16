@@ -1,0 +1,132 @@
+.jquery_inputmultiselect_ie6_iframe
+{
+  position: absolute;
+  display: none;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  z-index: 99;
+}
+
+.jquery_inputmultiselect_input
+{ 
+  color: black;
+  background-color: white;
+  background-image: url(inputmultiselect.gif);
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-position: center right;
+  }
+
+.jquery_inputmultiselect_blurred
+{ 
+  color: gray !important;
+  }
+
+.jquery_inputmultiselect_options_container
+{ 
+  text-align: left;
+  position: absolute;
+  display: none;
+  top: 0;
+  left: 0;
+  height: auto;
+  border: 2px solid #73b4e3;
+  font-size: 13px;
+  line-height: 15px;
+  font-family: Helvetica, Tahoma, Arial, sans-serif;
+  margin: 0;
+  padding: 0 2px;
+  background-color: white;
+  z-index: 100;
+  }
+
+.jquery_inputmultiselect_options_helptext
+{
+  color: gray;
+  margin: 2px;
+  }
+
+.jquery_inputmultiselect_options_item,
+.jquery_inputmultiselect_options_item SPAN
+{ 
+  cursor: pointer;
+  }
+
+DIV.jquery_inputmultiselect_options_headernocb,
+DIV.jquery_inputmultiselect_options_headernocb SPAN
+{
+  cursor: auto;
+  }
+
+.jquery_inputmultiselect_options_item INPUT
+{ 
+  vertical-align: middle;
+}
+
+.jquery_inputmultiselect_options_child_sticky INPUT,
+.jquery_inputmultiselect_options_child_unselected INPUT,
+.jquery_inputmultiselect_options_child_selected INPUT
+{ 
+  margin-left: 10px;
+}
+
+.jquery_inputmultiselect_options_item SPAN .jquery_inputmultiselect_options_text_filtermatch
+{ 
+  font-weight: bold;
+}
+
+/*
+If you want the text after the checkboxes to wrap bulleted-list style, use something like this:
+
+.jquery_inputmultiselect_options_cleartext .jquery_inputmultiselect_options_item SPAN,
+.jquery_inputmultiselect_options_sticky .jquery_inputmultiselect_options_item SPAN
+{ 
+  width: auto;
+}
+
+.jquery_inputmultiselect_options_item SPAN
+{ 
+  display: inline-block;
+  width: 190px;
+}
+*/
+
+.jquery_inputmultiselect_options_item
+{ 
+  border: 1px solid white;
+  line-height: 20px;
+ }
+
+.jquery_inputmultiselect_options_selected_item
+{ 
+  background-color: #223388;
+  border: 1px solid #223388;
+  color: white;
+  }
+
+.jquery_inputmultiselect_options_item_arrownav_selected
+{ 
+  border: 1px solid #777777;
+ }
+
+.jquery_inputmultiselect_options_item_hovered
+{ 
+  color: white;
+  border: 1px solid #FF6D00;
+  background-color: #FF6D00;
+  }
+
+.jquery_inputmultiselect_options_item_singlefiltered
+{ 
+  color: white;
+  background-color: #FF6D00;
+  }
+
+.jquery_inputmultiselect_options_unselected
+{ 
+  height: 150px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  }
