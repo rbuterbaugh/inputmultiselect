@@ -4,7 +4,6 @@ $old_release=$ARGV[0];
 $new_release=$ARGV[1];
 
 $jsmin="jsmin";
-$pack="php ~/packer/example-file.php";
 
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year+=1900;
@@ -36,23 +35,4 @@ close F;
 `cat inputmultiselect-$new_release.min.js.tmp >> inputmultiselect-$new_release.min.js`;
 `rm inputmultiselect-$new_release.min.js.tmp`;
 
-# pack new release js
-`$pack inputmultiselect-$new_release.js.notest inputmultiselect-$new_release.packed.js.tmp`;
-`cat inputmultiselect.copyright.txt|sed 's/%VERSION%/$new_release/g'|sed 's/%YEAR%/$year/g'>inputmultiselect-$new_release.packed.js`;
-`cat inputmultiselect-$new_release.packed.js.tmp >> inputmultiselect-$new_release.packed.js`;
-`rm inputmultiselect-$new_release.packed.js.tmp`;
-
 `rm inputmultiselect-$new_release.js.notest`;
-
-# extract example package
-`unzip inputmultiselect-$old_release.zip`;
-
-# build example package directory
-`mv inputmultiselect-$old_release inputmultiselect-$new_release`;
-`rm inputmultiselect-$new_release/inputmultiselect-$old_release.js inputmultiselect-$new_release/inputmultiselect-$old_release.min.js`;
-`cp inputmultiselect-$new_release.js inputmultiselect-$new_release/`;
-`cp inputmultiselect-$new_release.min.js inputmultiselect-$new_release/`;
-`cat inputmultiselect-$new_release/index.html|sed 's/$old_release/$new_release/g'>inputmultiselect-$new_release/index.html`;
-`zip -r inputmultiselect-$new_release.zip inputmultiselect-$new_release/`;
-`rm -rf inputmultiselect-$new_release/`;
-`cat index.html|sed 's/$old_release/$new_release/g'>index.html.tmp && mv index.html.tmp index.html`;
