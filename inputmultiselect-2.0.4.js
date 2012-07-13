@@ -1,5 +1,5 @@
 /*!
- * jQuery inputmultiselect plugin v2.0.0
+ * jQuery inputmultiselect plugin v2.0.4
  *  http://ryan.buterbaugh.org/inputmultiselect/
  *
  * Copyright (c) 2010 Ryan Buterbaugh
@@ -1206,7 +1206,7 @@
        var prevValue=null;
        $sSelect.find("OPTION").each(
 	 function() {
-	   var value=$(this).val();
+	   var value=$(this).val().replace(/[^a-zA-Z0-9_-]/g,"_");
 	   var props=$(this).attr(prefs.optionPropertiesField);
 	   var text=$(this).text();
 	   var selected=$(this).is(":selected");
@@ -1231,7 +1231,7 @@
 	     selected:selected,
 	     filtered:false,
 	     obj:$(this), // for the benefit of the callback
-	     val:value // for the benefit of the callback
+	     val:$(this).val() // for the benefit of the callback
 	   };
 
 	   if (prevValue !== null) {
@@ -1370,6 +1370,7 @@
        var tmpCache=getSelectOptions();
        assertFalse(tmpCache["_0"].filtered,"0 is not filtered");
        assertTrue(tmpCache["_0"].selected,"0 is selected");
+       assertFalse(tmpCache["_eight_and_a_half"].selected,"Eight 1/2 is not selected");
        assert("sticky",tmpCache["_0"].props,"0 has sticky as a property");
        assert(null,tmpCache["_selectafew"].prevItem,"first element has no previous element");
        assert("_0",tmpCache["_selectafew"].nextItem,"first element has _0 as next element");
@@ -1416,7 +1417,7 @@
        assertFalse(andMatch("woot ness hoo ray",["ness","ray","ski"]),"failed 'and' match");
 
        var visibleOptions=getAllVisibleOptions();
-       assert(12,visibleOptions.length,"visible options length is 12");
+       assert(13,visibleOptions.length,"visible options length is 13");
        assert("_1",firstUnselected(visibleOptions),"first unselected is _1");
        assert("_10",lastUnselected(visibleOptions),"last unselected is _10");
 
