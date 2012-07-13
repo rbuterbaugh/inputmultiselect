@@ -33,10 +33,4 @@ close F;
 `$jsmin <inputmultiselect-$new_release.js.notest >inputmultiselect-$new_release.min.js.tmp`;
 `cat inputmultiselect.copyright.txt|sed 's/%VERSION%/$new_release/g'|sed 's/%YEAR%/$year/g'>inputmultiselect-$new_release.min.js`;
 `cat inputmultiselect-$new_release.min.js.tmp >> inputmultiselect-$new_release.min.js`;
-`rm inputmultiselect-$new_release.min.js.tmp`;
-
-# symlink new release
-`rm -f inputmultiselect.min.js`;
-`ln -s inputmultiselect-$new_release.min.js inputmultiselect.min.js`;
-
-`rm inputmultiselect-$new_release.js.notest`;
+`rm inputmultiselect-$new_release.min.js.tmp inputmultiselect-$new_release.js.notest`;
